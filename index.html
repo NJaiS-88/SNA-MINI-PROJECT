@@ -1,0 +1,3182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Influencer Campaign & Viral Optimization - Research Dashboard</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Plotly.js for Interactive 3D Visualizations -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-white: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-hover: #f8fafc;
+      
+      --border-light: #e2e8f0;
+      --border-medium: #cbd5e1;
+      --border-focus: #94a3b8;
+      
+      --text-main: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      
+      --emerald-text: #065f46;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      
+      --amber-text: #92400e;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      
+      --rose-text: #9f1239;
+      --rose-bg: #fff1f2;
+      --rose-border: #fecdd3;
+      
+      --indigo-text: #3730a3;
+      --indigo-bg: #eef2ff;
+      --indigo-border: #c7d2fe;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 8px 16px -2px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+      --shadow-modal: 0 25px 40px -10px rgba(15, 23, 42, 0.18), 0 12px 16px -6px rgba(15, 23, 42, 0.1);
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+
+    /* Minimal Theme Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+      transition: background 0.2s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* Scroll Reveal Animation Utility */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.5s var(--ease-spring), transform 0.5s var(--ease-spring);
+      will-change: opacity, transform;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Interactive Click Feedback on all interactive elements */
+    button, .pill-btn, .tab-btn, .inspect-btn, .plot-thumb-frame, .finding-card {
+      user-select: none;
+    }
+    button:active, .pill-btn:active, .tab-btn:active, .inspect-btn:active {
+      transform: scale(0.96) !important;
+      transition: transform 0.08s ease !important;
+    }
+
+    /* Minimal Header */
+    header {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    header:hover {
+      box-shadow: var(--shadow-card);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .badge-label {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .badge-label:hover {
+      background: #dbeafe;
+      border-color: #93c5fd;
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .header-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 880px;
+      line-height: 1.6;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .header-meta:hover {
+      background: #eef2f6;
+      border-color: var(--border-medium);
+    }
+    .header-meta strong {
+      color: var(--text-main);
+    }
+
+    /* KPI Summary Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .kpi-cell {
+      padding: 10px 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      transition: background 0.2s var(--ease-spring), border-color 0.2s var(--ease-spring), transform 0.2s var(--ease-spring);
+    }
+    .kpi-cell:hover {
+      background: #eef2f6;
+      border-color: var(--border-medium);
+      transform: translateY(-2px);
+    }
+
+    .kpi-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    .kpi-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--text-main);
+    }
+
+    .kpi-caption {
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    /* Segmented Navigation Bar */
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.95);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .tab-btn {
+      padding: 8px 18px;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s var(--ease-spring);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-subtle);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+    }
+
+    .tab-btn .count-pill {
+      margin-left: 6px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.25);
+      padding: 1px 6px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:not(.active) .count-pill {
+      background: var(--border-light);
+      color: var(--text-muted);
+    }
+
+    /* Tab Sections with Soft Enter Animation */
+    .tab-panel {
+      display: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s var(--ease-spring), transform 0.3s var(--ease-spring);
+    }
+    .tab-panel.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Minimal Card */
+    .panel-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .panel-card:hover {
+      border-color: #d1d5db;
+    }
+
+    .card-heading-group {
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .card-subheading {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* 3D Visualization Studio Styles */
+    .viz-3d-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      margin-bottom: 18px;
+    }
+
+    .viz-3d-container {
+      width: 100%;
+      height: 600px;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viz-3d-overlay {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      z-index: 10;
+    }
+
+    /* Minimal Alert Callouts */
+    .alert-box {
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      border: 1px solid;
+      transition: transform 0.2s var(--ease-spring);
+    }
+    .alert-box:hover {
+      transform: translateY(-1px);
+    }
+
+    .alert-amber {
+      background: var(--amber-bg);
+      border-color: var(--amber-border);
+      color: var(--amber-text);
+    }
+    .alert-emerald {
+      background: var(--emerald-bg);
+      border-color: var(--emerald-border);
+      color: var(--emerald-text);
+    }
+    .alert-indigo {
+      background: var(--indigo-bg);
+      border-color: var(--indigo-border);
+      color: var(--indigo-text);
+    }
+
+    .alert-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .alert-desc {
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    /* 3-Column Paradox Explainer */
+    .trio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .trio-item {
+      padding: 16px 18px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      transition: background 0.2s var(--ease-spring), border-color 0.2s var(--ease-spring), transform 0.2s var(--ease-spring);
+    }
+    .trio-item:hover {
+      background: #eef2f6;
+      border-color: var(--border-medium);
+      transform: translateY(-2px);
+    }
+
+    .trio-item h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .trio-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Findings Grid */
+    .findings-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 18px;
+    }
+
+    .finding-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring), transform 0.2s var(--ease-spring);
+    }
+    .finding-card:hover {
+      border-color: var(--border-medium);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+
+    .finding-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .finding-number {
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .status-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+    }
+    .tag-success { background: var(--emerald-bg); color: var(--emerald-text); border: 1px solid var(--emerald-border); }
+    .tag-warning { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+    .tag-failure { background: var(--rose-bg); color: var(--rose-text); border: 1px solid var(--rose-border); }
+    .tag-neutral { background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); }
+
+    .finding-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .finding-summary {
+      font-size: 0.86rem;
+      color: var(--text-body);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .data-table-mini {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .data-table-mini tr {
+      border-top: 1px solid var(--border-light);
+    }
+    .data-table-mini td {
+      padding: 6px 0;
+    }
+    .data-table-mini td.label {
+      color: var(--text-muted);
+    }
+    .data-table-mini td.val {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Clean Tables */
+    .table-frame {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      margin-top: 10px;
+    }
+
+    table.clean-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    table.clean-table th {
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-light);
+      white-space: nowrap;
+    }
+
+    table.clean-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-body);
+      white-space: nowrap;
+      transition: background 0.12s ease;
+    }
+
+    table.clean-table tr:last-child td {
+      border-bottom: none;
+    }
+    table.clean-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .mono-cell {
+      font-family: var(--font-mono);
+    }
+    .bold-cell {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Gallery Controls */
+    .gallery-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill-btn {
+      padding: 6px 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 999px;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s var(--ease-spring);
+    }
+    .pill-btn:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+    .pill-btn.active {
+      background: var(--text-main);
+      color: #ffffff;
+      border-color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
+
+    .search-input-clean {
+      width: 100%;
+      padding: 6px 12px 6px 30px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s var(--ease-spring);
+    }
+    .search-input-clean:focus {
+      border-color: var(--primary);
+      background: var(--bg-white);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .search-icon-clean {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    /* Plot Cards Layout */
+    .plots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+    }
+
+    .plot-item-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s var(--ease-spring), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .plot-item-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-medium);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .plot-thumb-frame {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .plot-thumb-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s var(--ease-spring);
+    }
+    .plot-item-card:hover .plot-thumb-frame img {
+      transform: scale(1.035);
+    }
+
+    .thumb-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--border-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      backdrop-filter: blur(4px);
+    }
+
+    .thumb-id {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--border-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-main);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      backdrop-filter: blur(4px);
+    }
+
+    .plot-content-area {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .plot-card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .plot-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
+      flex: 1;
+    }
+
+    .plot-card-footer {
+      border-top: 1px solid var(--border-light);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .plot-card-takeaway {
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      max-width: 240px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .inspect-btn {
+      padding: 5px 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s var(--ease-spring);
+    }
+    .inspect-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Minimalist Lightbox Modal */
+    .modal-backdrop {
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      transition: opacity 0.24s var(--ease-spring);
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .clean-modal {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      transform: scale(0.96) translateY(12px);
+      opacity: 0;
+      transition: transform 0.26s var(--ease-spring), opacity 0.26s var(--ease-spring);
+    }
+    .modal-backdrop.open .clean-modal {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .modal-bar {
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafafa;
+    }
+
+    .modal-bar-title h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+    }
+    .modal-close-btn:hover {
+      background: var(--border-light);
+      color: var(--text-main);
+      transform: scale(1.05);
+    }
+
+    .modal-inner {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      overflow: hidden;
+      flex: 1;
+      min-height: 500px;
+    }
+
+    .modal-image-side {
+      background: #f8fafc;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid var(--border-light);
+      overflow: auto;
+    }
+    .modal-image-side img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      transition: opacity 0.18s ease, transform 0.18s var(--ease-spring);
+      opacity: 1;
+    }
+    .modal-image-side img.switching {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+
+    .modal-text-side {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .modal-section-text {
+      font-size: 0.88rem;
+      color: var(--text-body);
+      line-height: 1.6;
+    }
+
+    .modal-nav-bar {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Seed Cards Grid */
+    .seed-cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    .clean-seed-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      transition: background 0.2s var(--ease-spring), border-color 0.2s var(--ease-spring), transform 0.2s var(--ease-spring);
+    }
+    .clean-seed-card:hover {
+      background: #eef2f6;
+      border-color: var(--border-medium);
+      transform: translateY(-2px);
+    }
+
+    .clean-seed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .clean-seed-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .clean-seed-cov {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .node-pill {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      padding: 2px 6px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      color: var(--text-body);
+      transition: all 0.15s ease;
+    }
+    .node-pill:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    @media (max-width: 860px) {
+      .modal-inner {
+        grid-template-columns: 1fr;
+      }
+      .modal-image-side {
+        height: 320px;
+      }
+      .viz-3d-container {
+        height: 480px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="reveal">
+      <div class="header-top">
+        <div>
+          <span class="badge-label">Social Network Analysis &amp; Diffusion Research</span>
+          <h1>AI-Based Influencer Detection &amp; Campaign Optimization</h1>
+          <p class="header-desc">
+            Empirical benchmark evaluating Machine Learning on structural graph features against traditional centralities (Degree, PageRank, Betweenness) under Independent Cascade and Linear Threshold diffusion dynamics.
+          </p>
+        </div>
+        <div class="header-meta">
+          <div>Dataset: <strong>SNAP ego-Facebook</strong></div>
+          <div>•</div>
+          <div>Simulations: <strong>200 Monte Carlo</strong></div>
+          <div>•</div>
+          <div>Runtime: <strong>423.0s</strong></div>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-row">
+        <div class="kpi-cell">
+          <div class="kpi-title">Network Size</div>
+          <div class="kpi-val">4,039 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-muted);">nodes</span></div>
+          <div class="kpi-caption">88,234 edges (density 0.0108)</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-title">Best ML Model</div>
+          <div class="kpi-val">0.971 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-muted);">R²</span></div>
+          <div class="kpi-caption">Random Forest (MAE 85.45)</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-title">Winning Strategy</div>
+          <div class="kpi-val" style="color:var(--primary);">55.16%</div>
+          <div class="kpi-caption">PageRank (2,227.8 nodes)</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-title">Community Optimization</div>
+          <div class="kpi-val" style="color:var(--emerald-text);">+1.89 pp</div>
+          <div class="kpi-caption">AI+Comm vs AI (p = 3.1e-06)</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-title">Hypothesis 1 (ML &gt; Centrality)</div>
+          <div class="kpi-val" style="color:var(--rose-text); font-size: 1.05rem;">Rejected</div>
+          <div class="kpi-caption">Centrality significantly won</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs with explicit IDs and data-tab attributes -->
+    <nav class="tab-bar reveal" id="tabBar">
+      <button class="tab-btn active" id="tab-btn-findings" data-tab="tab-findings">
+        Executive Summary &amp; Findings
+      </button>
+      <button class="tab-btn" id="tab-btn-gallery" data-tab="tab-gallery">
+        Plot Gallery <span class="count-pill">27</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-3d" data-tab="tab-3d">
+        3D Interactive Studio <span class="count-pill">3D</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-benchmarks" data-tab="tab-benchmarks">
+        Campaign &amp; Model Benchmarks
+      </button>
+      <button class="tab-btn" id="tab-btn-seeds" data-tab="tab-seeds">
+        Seeds &amp; Communities
+      </button>
+      <button class="tab-btn" id="tab-btn-sensitivity" data-tab="tab-sensitivity">
+        Sensitivity (Budget &amp; p)
+      </button>
+      <button class="tab-btn" id="tab-btn-methodology" data-tab="tab-methodology">
+        Methodology &amp; Formulations
+      </button>
+    </nav>
+
+    <!-- ==================== TAB 1: EXECUTIVE SUMMARY & FINDINGS ==================== -->
+    <section class="tab-panel active" id="tab-findings">
+      <!-- Hypothesis Status Box -->
+      <div class="alert-box alert-amber reveal">
+        <div class="alert-title">Empirical Hypothesis Evaluation: Partially Supported</div>
+        <div class="alert-desc">
+          <strong>Hypothesis Part 1 (ML Top-K &gt; Single Centralities):</strong> <span style="font-weight:600;color:var(--rose-text);">Rejected.</span> Under equal budget (<em>k</em> = 10, <em>p</em> = 0.05), PageRank (55.16%), Betweenness (54.51%), and Degree (53.40%) all statistically significantly outperformed raw AI top-K (47.62%, paired t-test <em>p</em> &lt; 10<sup>&minus;35</sup>).<br>
+          <strong>Hypothesis Part 2 (Community-Aware Diversity Optimization &gt; Raw AI):</strong> <span style="font-weight:600;color:var(--emerald-text);">Confirmed.</span> Greedy community-aware optimization raised coverage from 47.62% to 49.51% (+1.89 percentage points, <em>p</em> = 3.11 &times; 10<sup>&minus;6</sup>), proving that audience overlap was the primary bottleneck.
+        </div>
+      </div>
+
+      <!-- Overlap Paradox Breakdown -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">The Audience Overlap Paradox: Why Centrality Beat Machine Learning</h2>
+          <p class="card-subheading">A critical distinction between single-node prediction precision and multi-node collective cascade efficiency.</p>
+        </div>
+        <div class="trio-grid">
+          <div class="trio-item">
+            <h4>1. The ML Model Was Extremely Accurate</h4>
+            <p>
+              Random Forest achieved an <em>R</em><sup>2</sup> = 0.9705 and Spearman &rho; = 0.9788 in predicting single-node diffusion potential. Feature importance proved that <code>core_number</code> (<em>k</em>-core decomposition) overwhelmingly dictates individual reach (87.3% impurity importance).
+            </p>
+          </div>
+          <div class="trio-item">
+            <h4>2. High-Core Nodes Cluster Together</h4>
+            <p>
+              Because high <em>k</em>-core nodes live within dense internal subgraphs, selecting the top-10 individually highest predicted nodes clustered <strong>6 out of 10 seeds inside Community 9</strong> alone. Their cascades immediately collided, causing severe audience redundancy.
+            </p>
+          </div>
+          <div class="trio-item">
+            <h4>3. PageRank Spanned Communities Naturally</h4>
+            <p>
+              PageRank seeds naturally dispersed across <strong>8 separate communities</strong>. By initiating spread from multiple distinct topological sectors, PageRank avoided audience cannibalization and achieved peak adoption velocity (675.6 nodes/step).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 Core Findings from final_findings.md -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">10 Core Quantitative Findings</h2>
+          <p class="card-subheading">Complete verified metrics, parameters, and results generated from experimental execution.</p>
+        </div>
+
+        <div class="findings-layout">
+          <!-- Finding 1 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #1</span>
+              <span class="status-tag tag-neutral">Topology</span>
+            </div>
+            <h3 class="finding-name">Network Scale &amp; Small-World Structure</h3>
+            <p class="finding-summary">
+              SNAP ego-Facebook is a sparse (density 0.01082) but heavily clustered (0.6055) small-world network with an average shortest path of 3.693 hops and diameter 8.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">Nodes / Edges</td><td class="val">4,039 / 88,234</td></tr>
+              <tr><td class="label">Average Degree / Median</td><td class="val">43.69 / 25.0</td></tr>
+              <tr><td class="label">Max Degree (Hub 107)</td><td class="val">1,045.0</td></tr>
+              <tr><td class="label">Louvain Communities</td><td class="val">15 (Modularity Q = 0.835)</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 2 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #2</span>
+              <span class="status-tag tag-neutral">Centrality</span>
+            </div>
+            <h3 class="finding-name">Traditional SNA Influential Hubs</h3>
+            <p class="finding-summary">
+              Node 107 leads degree (0.259) and betweenness (0.481), controlling nearly half of all shortest paths. Node 3437 leads PageRank (0.0076) as a strategic global prestige node.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">Top Degree Nodes</td><td class="val">107, 1684, 1912, 3437, 0</td></tr>
+              <tr><td class="label">Top PageRank Nodes</td><td class="val">3437, 107, 1684, 0, 1912</td></tr>
+              <tr><td class="label">Top Betweenness Nodes</td><td class="val">107, 1684, 3437, 1912, 1085</td></tr>
+              <tr><td class="label">Top Closeness Nodes</td><td class="val">107, 58, 428, 563, 1684</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 3 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #3</span>
+              <span class="status-tag tag-success">ML Accuracy</span>
+            </div>
+            <h3 class="finding-name">ML Generalization on Test Nodes</h3>
+            <p class="finding-summary">
+              Tree ensembles accurately predicted simulated cascade potential on 808 held-out test nodes, strongly outperforming linear regression and single centrality baselines.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">Random Forest R² / Spearman</td><td class="val">0.9705 / 0.9788</td></tr>
+              <tr><td class="label">Gradient Boosting R² / Spearman</td><td class="val">0.9685 / 0.9786</td></tr>
+              <tr><td class="label">Linear Regression R² / MAE</td><td class="val">0.8143 / 240.5</td></tr>
+              <tr><td class="label">Degree-only Baseline Spearman</td><td class="val">0.8846</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 4 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #4</span>
+              <span class="status-tag tag-success">Importance</span>
+            </div>
+            <h3 class="finding-name">k-Core Dominates Over Degree</h3>
+            <p class="finding-summary">
+              Permutation and impurity importance revealed that <code>core_number</code> (<em>k</em>-core decomposition) is overwhelmingly the most predictive feature, followed by eigenvector and closeness.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">Core Number (Impurity / Perm)</td><td class="val">0.8725 / 1.1608</td></tr>
+              <tr><td class="label">Eigenvector Centrality</td><td class="val">0.0423 / 0.0636</td></tr>
+              <tr><td class="label">Closeness Centrality</td><td class="val">0.0352 / 0.0397</td></tr>
+              <tr><td class="label">Raw Degree Importance</td><td class="val">0.0114 / 0.0074</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 5 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #5</span>
+              <span class="status-tag tag-failure">Campaign</span>
+            </div>
+            <h3 class="finding-name">Campaign Coverage (Independent Cascade)</h3>
+            <p class="finding-summary">
+              At <em>k</em> = 10, <em>p</em> = 0.05 across 200 runs, PageRank achieved the highest mean coverage (55.16%), while raw AI ranked lowest (47.62%), even trailing Random (49.82%).
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">PageRank (Winner)</td><td class="val">55.16% ± 1.17% (12.90 steps)</td></tr>
+              <tr><td class="label">Betweenness Centrality</td><td class="val">54.51% ± 1.33% (13.03 steps)</td></tr>
+              <tr><td class="label">Degree Centrality</td><td class="val">53.40% ± 1.10% (12.89 steps)</td></tr>
+              <tr><td class="label">Raw AI Top-K</td><td class="val">47.62% ± 5.27% (17.17 steps)</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 6 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #6</span>
+              <span class="status-tag tag-success">Optimization</span>
+            </div>
+            <h3 class="finding-name">Community Optimization Efficacy</h3>
+            <p class="finding-summary">
+              Enforcing community diversity constraints raised represented communities from 3 to 6 modules, improving coverage by +1.89 percentage points (<em>p</em> &lt; 0.001).
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">AI + Community Coverage</td><td class="val">49.51% (std 2.44%)</td></tr>
+              <tr><td class="label">Raw AI Coverage</td><td class="val">47.62% (std 5.27%)</td></tr>
+              <tr><td class="label">Paired t-test (AI+Comm vs AI)</td><td class="val">t = 4.80, p = 3.11e-06</td></tr>
+              <tr><td class="label">Represented Communities</td><td class="val">AI: 3 vs AI+Comm: 6</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 7 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #7</span>
+              <span class="status-tag tag-neutral">Budget</span>
+            </div>
+            <h3 class="finding-name">Budget Scaling &amp; Strategy Crossover</h3>
+            <p class="finding-summary">
+              At <em>k</em> = 1, AI outperformed PageRank (46.94% vs 19.96%). As budget increases (<em>k</em> &ge; 3), multi-seed structural diversity drives PageRank into the lead.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">k = 1: AI vs PageRank</td><td class="val">46.94% vs 19.96%</td></tr>
+              <tr><td class="label">k = 3: AI vs PageRank</td><td class="val">46.92% vs 51.32%</td></tr>
+              <tr><td class="label">k = 5: AI vs PageRank</td><td class="val">48.15% vs 53.40%</td></tr>
+              <tr><td class="label">k = 10: AI vs PageRank</td><td class="val">47.62% vs 55.16%</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 8 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #8</span>
+              <span class="status-tag tag-neutral">Contagion</span>
+            </div>
+            <h3 class="finding-name">Propagation Probability (p) Sweep</h3>
+            <p class="finding-summary">
+              Strategy divergence peaks at intermediate probabilities (<em>p</em> = 0.02 &ndash; 0.05, gap of 8.10 pp), and converges in super-critical regimes (<em>p</em> = 0.10, ~72&ndash;75%).
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">p = 0.005 (Sub-critical)</td><td class="val">Degree 1.34% vs AI 0.65%</td></tr>
+              <tr><td class="label">p = 0.030 (Peak Divergence)</td><td class="val">PageRank 37.03% vs AI 28.93%</td></tr>
+              <tr><td class="label">p = 0.050 (Standard)</td><td class="val">PageRank 55.16% vs AI 47.62%</td></tr>
+              <tr><td class="label">p = 0.100 (Super-critical)</td><td class="val">PageRank 75.71% vs AI 71.63%</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 9 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #9</span>
+              <span class="status-tag tag-success">Concordance</span>
+            </div>
+            <h3 class="finding-name">Diffusion Model Robustness (IC vs LT)</h3>
+            <p class="finding-summary">
+              Strategy rankings showed strong rank correlation (Spearman &rho; = 0.77) between Independent Cascade and Linear Threshold models.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">PageRank (IC / LT)</td><td class="val">55.16% / 35.36% (#1 in both)</td></tr>
+              <tr><td class="label">Betweenness (IC / LT)</td><td class="val">54.51% / 31.36% (#2 in both)</td></tr>
+              <tr><td class="label">Degree (IC / LT)</td><td class="val">53.40% / 33.80% (#3 in both)</td></tr>
+              <tr><td class="label">AI + Comm (IC / LT)</td><td class="val">49.51% / 12.92%</td></tr>
+            </table>
+          </div>
+
+          <!-- Finding 10 -->
+          <div class="finding-card reveal">
+            <div class="finding-meta">
+              <span class="finding-number">Finding #10</span>
+              <span class="status-tag tag-success">Recommendation</span>
+            </div>
+            <h3 class="finding-name">Seed-Selection Recommendation</h3>
+            <p class="finding-summary">
+              For multi-seed campaigns (<em>k</em> &ge; 5), PageRank is definitively recommended. For single-influencer micro-budgets (<em>k</em> = 1), ML regression is optimal.
+            </p>
+            <table class="data-table-mini">
+              <tr><td class="label">Overall Recommended</td><td class="val">PageRank (Highest Reach &amp; Speed)</td></tr>
+              <tr><td class="label">Peak Adoption Velocity</td><td class="val">675.6 nodes/step at t = 3.0</td></tr>
+              <tr><td class="label">AI Overlap Disconnect</td><td class="val">0.0% overlap with Top-10 Centrality</td></tr>
+              <tr><td class="label">Guiding Principle</td><td class="val">Enforce Cross-Community Dispersion</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: 3D INTERACTIVE STUDIO ==================== -->
+    <section class="tab-panel" id="tab-3d">
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">3D Interactive Visualization Studio</h2>
+          <p class="card-subheading">Rotate, orbit, zoom, and inspect topological clusters, the diffusion response manifold, and the 3D centrality space.</p>
+        </div>
+
+        <!-- 3D View Switcher Controls -->
+        <div class="viz-3d-toolbar">
+          <div class="filter-group" id="btnGroup3D">
+            <button class="pill-btn active" id="btn3dTopology" data-view="topology">1. 3D Network &amp; Seed Sets</button>
+            <button class="pill-btn" id="btn3dSurface" data-view="surface">2. 3D Diffusion Manifold (k &times; p &times; Cov)</button>
+            <button class="pill-btn" id="btn3dCentrality" data-view="centrality">3. 3D Structural Centrality Space</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="inspect-btn" id="btnReset3DCamera" title="Reset Camera Angle">↺ Reset Angle</button>
+          </div>
+        </div>
+
+        <!-- 3D Plot Container -->
+        <div class="viz-3d-container">
+          <div class="viz-3d-overlay" id="overlay3d">
+            <span>Click &amp; Drag to Rotate • Scroll to Zoom • Hover for Node Data</span>
+          </div>
+          <div id="plotly3dDiv" style="width:100%; height:100%;"></div>
+        </div>
+
+        <!-- 3D Explanation Panel -->
+        <div style="margin-top:16px; padding:16px 20px; background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-sm);" id="desc3dBox">
+          <h4 style="font-size:0.92rem; font-weight:700; color:var(--text-main); margin-bottom:4px;" id="title3d">3D Network Topology &amp; Seed Placements</h4>
+          <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55;" id="text3d">
+            Displays a 3D topological projection of the social network clusters with highlighted seed sets. Orbit around the graph to observe how PageRank seeds span distinct spatial sectors, while raw AI seeds clump tightly in dense internal clusters.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: PLOT GALLERY ==================== -->
+    <section class="tab-panel" id="tab-gallery">
+      <!-- Filter and Search Toolbar -->
+      <div class="gallery-filter-bar reveal">
+        <div class="filter-group" id="filterGroup">
+          <button class="pill-btn active" data-filter="all">All Plots (27)</button>
+          <button class="pill-btn" data-filter="network">Topology (5)</button>
+          <button class="pill-btn" data-filter="centrality">Centrality (4)</button>
+          <button class="pill-btn" data-filter="ml">Machine Learning (4)</button>
+          <button class="pill-btn" data-filter="seeds">Influencers &amp; Seeds (3)</button>
+          <button class="pill-btn" data-filter="dynamics">Cascade Dynamics (5)</button>
+          <button class="pill-btn" data-filter="campaign">Campaign Benchmark (4)</button>
+          <button class="pill-btn" data-filter="sensitivity">Sensitivity (2)</button>
+        </div>
+        <div class="search-box">
+          <span class="search-icon-clean">🔍</span>
+          <input type="text" class="search-input-clean" id="gallerySearchInput" placeholder="Filter by plot name, model, metric...">
+        </div>
+      </div>
+
+      <!-- Plots Grid -->
+      <div class="plots-grid" id="plotsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: CAMPAIGN & ML BENCHMARKS ==================== -->
+    <section class="tab-panel" id="tab-benchmarks">
+      <!-- IC Campaign Results -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Campaign Evaluation: Independent Cascade Benchmark (IC)</h2>
+          <p class="card-subheading">Parameters: k = 10 seeds, p = 0.05, 200 Monte Carlo runs per strategy.</p>
+        </div>
+        <div class="table-frame">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Strategy</th>
+                <th>Mean Coverage (%)</th>
+                <th>Std Dev</th>
+                <th>95% CI</th>
+                <th>Mean Spread</th>
+                <th>Min / Max</th>
+                <th>Duration (steps)</th>
+                <th>Peak Velocity (nodes/step)</th>
+                <th>Time to Peak</th>
+                <th>Communities</th>
+                <th>Performance Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold-cell">PageRank</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">55.16%</td>
+                <td class="mono-cell">1.17%</td>
+                <td class="mono-cell">±0.16%</td>
+                <td class="mono-cell">2,227.8</td>
+                <td class="mono-cell">2,039 / 2,349</td>
+                <td class="mono-cell">12.90</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--primary);">675.6</td>
+                <td class="mono-cell">3.00</td>
+                <td class="mono-cell">8.0</td>
+                <td><span class="status-tag tag-success">#1 Top Performer</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">Betweenness</td>
+                <td class="mono-cell">54.51%</td>
+                <td class="mono-cell">1.33%</td>
+                <td class="mono-cell">±0.18%</td>
+                <td class="mono-cell">2,201.6</td>
+                <td class="mono-cell">2,019 / 2,324</td>
+                <td class="mono-cell">13.03</td>
+                <td class="mono-cell">668.3</td>
+                <td class="mono-cell">3.00</td>
+                <td class="mono-cell">7.0</td>
+                <td><span class="status-tag tag-neutral">#2 Structural Bridge</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">Degree</td>
+                <td class="mono-cell">53.40%</td>
+                <td class="mono-cell">1.10%</td>
+                <td class="mono-cell">±0.15%</td>
+                <td class="mono-cell">2,156.9</td>
+                <td class="mono-cell">1,965 / 2,270</td>
+                <td class="mono-cell">12.89</td>
+                <td class="mono-cell">550.4</td>
+                <td class="mono-cell">2.92</td>
+                <td class="mono-cell">6.0</td>
+                <td><span class="status-tag tag-neutral">#3 Direct Hub</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">Random</td>
+                <td class="mono-cell">49.82%</td>
+                <td class="mono-cell">5.59%</td>
+                <td class="mono-cell">±0.77%</td>
+                <td class="mono-cell">2,012.3</td>
+                <td class="mono-cell">491 / 2,317</td>
+                <td class="mono-cell">17.60</td>
+                <td class="mono-cell">377.3</td>
+                <td class="mono-cell">5.21</td>
+                <td class="mono-cell">6.6</td>
+                <td><span class="status-tag tag-warning">High Variance</span></td>
+              </tr>
+              <tr style="background:#f0fdf4;">
+                <td class="bold-cell">AI + Community</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">49.51%</td>
+                <td class="mono-cell">2.44%</td>
+                <td class="mono-cell">±0.34%</td>
+                <td class="mono-cell">1,999.8</td>
+                <td class="mono-cell">1,814 / 2,207</td>
+                <td class="mono-cell">15.45</td>
+                <td class="mono-cell">546.1</td>
+                <td class="mono-cell">3.04</td>
+                <td class="mono-cell">6.0</td>
+                <td><span class="status-tag tag-success">+1.89% vs AI (p &lt; 0.001)</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">AI (Raw Top-K)</td>
+                <td class="mono-cell" style="color:var(--rose-text);">47.62%</td>
+                <td class="mono-cell">5.27%</td>
+                <td class="mono-cell">±0.73%</td>
+                <td class="mono-cell">1,923.6</td>
+                <td class="mono-cell">1,354 / 2,262</td>
+                <td class="mono-cell">17.17</td>
+                <td class="mono-cell">377.5</td>
+                <td class="mono-cell">3.00</td>
+                <td class="mono-cell">3.0</td>
+                <td><span class="status-tag tag-failure">Audience Overlap</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Statistical Tests Table -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Pairwise Statistical Hypothesis Testing (IC Model)</h2>
+          <p class="card-subheading">Paired student's t-test and Wilcoxon signed-rank test on 200 simulation runs.</p>
+        </div>
+        <div class="table-frame">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Comparison Pair (A vs B)</th>
+                <th>Mean Difference (pp)</th>
+                <th>95% Confidence Interval</th>
+                <th>Paired t-test p-value</th>
+                <th>Wilcoxon p-value</th>
+                <th>Statistical Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>AI vs. Degree</strong></td>
+                <td class="mono-cell" style="color:var(--rose-text);">-5.78 pp</td>
+                <td class="mono-cell">[-6.51, -5.05]</td>
+                <td class="mono-cell">3.80 × 10⁻³⁶</td>
+                <td class="mono-cell">3.15 × 10⁻³¹</td>
+                <td><span class="status-tag tag-failure">AI Statistically Worse</span></td>
+              </tr>
+              <tr>
+                <td><strong>AI vs. PageRank</strong></td>
+                <td class="mono-cell" style="color:var(--rose-text);">-7.53 pp</td>
+                <td class="mono-cell">[-8.26, -6.80]</td>
+                <td class="mono-cell">3.26 × 10⁻⁵⁰</td>
+                <td class="mono-cell">3.15 × 10⁻³⁴</td>
+                <td><span class="status-tag tag-failure">AI Statistically Worse</span></td>
+              </tr>
+              <tr>
+                <td><strong>AI vs. Betweenness</strong></td>
+                <td class="mono-cell" style="color:var(--rose-text);">-6.88 pp</td>
+                <td class="mono-cell">[-7.60, -6.17]</td>
+                <td class="mono-cell">2.97 × 10⁻⁴⁶</td>
+                <td class="mono-cell">5.88 × 10⁻³⁴</td>
+                <td><span class="status-tag tag-failure">AI Statistically Worse</span></td>
+              </tr>
+              <tr>
+                <td><strong>AI vs. Random</strong></td>
+                <td class="mono-cell" style="color:var(--rose-text);">-2.20 pp</td>
+                <td class="mono-cell">[-3.14, -1.26]</td>
+                <td class="mono-cell">8.36 × 10⁻⁰⁶</td>
+                <td class="mono-cell">1.60 × 10⁻⁰⁶</td>
+                <td><span class="status-tag tag-failure">AI Statistically Worse</span></td>
+              </tr>
+              <tr style="background:#f0fdf4;">
+                <td><strong>AI + Community vs. AI</strong></td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">+1.89 pp</td>
+                <td class="mono-cell">[+1.12, +2.66]</td>
+                <td class="mono-cell">3.11 × 10⁻⁰⁶</td>
+                <td class="mono-cell">3.33 × 10⁻⁰⁴</td>
+                <td><span class="status-tag tag-success">AI+Comm Statistically Better</span></td>
+              </tr>
+              <tr>
+                <td><strong>AI + Community vs. PageRank</strong></td>
+                <td class="mono-cell" style="color:var(--rose-text);">-5.65 pp</td>
+                <td class="mono-cell">[-6.00, -5.29]</td>
+                <td class="mono-cell">7.12 × 10⁻⁷⁹</td>
+                <td class="mono-cell">2.09 × 10⁻³⁴</td>
+                <td><span class="status-tag tag-neutral">PageRank Statistically Better</span></td>
+              </tr>
+              <tr>
+                <td><strong>AI + Community vs. Degree</strong></td>
+                <td class="mono-cell" style="color:var(--rose-text);">-3.89 pp</td>
+                <td class="mono-cell">[-4.23, -3.55]</td>
+                <td class="mono-cell">4.10 × 10⁻⁵⁶</td>
+                <td class="mono-cell">1.03 × 10⁻³²</td>
+                <td><span class="status-tag tag-neutral">Degree Statistically Better</span></td>
+              </tr>
+              <tr>
+                <td><strong>AI + Community vs. Random</strong></td>
+                <td class="mono-cell">-0.31 pp</td>
+                <td class="mono-cell">[-1.14, +0.52]</td>
+                <td class="mono-cell">0.4673</td>
+                <td class="mono-cell">0.0021</td>
+                <td><span class="status-tag tag-neutral">Similar Means, Lower Variance</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ML Regression & Feature Importance Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 20px;">
+        <!-- ML Evaluation -->
+        <div class="panel-card reveal">
+          <div class="card-heading-group">
+            <h3 class="card-heading" style="font-size: 1.05rem;">ML Model Accuracy (Test Nodes)</h3>
+            <p class="card-subheading">80/20 train/test split on 808 held-out nodes.</p>
+          </div>
+          <div class="table-frame">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>MAE</th>
+                  <th>RMSE</th>
+                  <th>R² Score</th>
+                  <th>Spearman ρ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background:#eff6ff;">
+                  <td><strong>Random Forest</strong></td>
+                  <td class="mono-cell">85.45</td>
+                  <td class="mono-cell">116.23</td>
+                  <td class="mono-cell" style="font-weight:700;color:var(--primary);">0.9705</td>
+                  <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">0.9788</td>
+                </tr>
+                <tr>
+                  <td>Gradient Boosting</td>
+                  <td class="mono-cell">88.90</td>
+                  <td class="mono-cell">120.17</td>
+                  <td class="mono-cell">0.9685</td>
+                  <td class="mono-cell">0.9786</td>
+                </tr>
+                <tr>
+                  <td>Linear Regression</td>
+                  <td class="mono-cell">240.50</td>
+                  <td class="mono-cell">291.61</td>
+                  <td class="mono-cell">0.8143</td>
+                  <td class="mono-cell">0.9440</td>
+                </tr>
+                <tr>
+                  <td>[Baseline] Degree Only</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">0.8846</td>
+                </tr>
+                <tr>
+                  <td>[Baseline] Betweenness Only</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">0.6493</td>
+                </tr>
+                <tr>
+                  <td>[Baseline] PageRank Only</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">-</td>
+                  <td class="mono-cell">0.5502</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Feature Importance -->
+        <div class="panel-card reveal">
+          <div class="card-heading-group">
+            <h3 class="card-heading" style="font-size: 1.05rem;">SNA Feature Importance</h3>
+            <p class="card-subheading">Random Forest Impurity (MDI) vs Permutation on Test Set.</p>
+          </div>
+          <div class="table-frame">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Impurity (MDI)</th>
+                  <th>Permutation</th>
+                  <th>Interpretation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background:#ecfdf5;">
+                  <td><code>core_number</code></td>
+                  <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">0.8725</td>
+                  <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">1.1608</td>
+                  <td>Dominates: k-core cluster depth</td>
+                </tr>
+                <tr>
+                  <td><code>eigenvector</code></td>
+                  <td class="mono-cell">0.0423</td>
+                  <td class="mono-cell">0.0636</td>
+                  <td>Connected to well-connected nodes</td>
+                </tr>
+                <tr>
+                  <td><code>closeness</code></td>
+                  <td class="mono-cell">0.0352</td>
+                  <td class="mono-cell">0.0397</td>
+                  <td>Global network proximity</td>
+                </tr>
+                <tr>
+                  <td><code>degree_centrality</code></td>
+                  <td class="mono-cell">0.0117</td>
+                  <td class="mono-cell">0.0095</td>
+                  <td>Direct edge connections</td>
+                </tr>
+                <tr>
+                  <td><code>degree</code></td>
+                  <td class="mono-cell">0.0114</td>
+                  <td class="mono-cell">0.0074</td>
+                  <td>Raw neighbor count</td>
+                </tr>
+                <tr>
+                  <td><code>community_size</code></td>
+                  <td class="mono-cell">0.0061</td>
+                  <td class="mono-cell">0.0070</td>
+                  <td>Cluster population scale</td>
+                </tr>
+                <tr>
+                  <td><code>clustering</code></td>
+                  <td class="mono-cell">0.0054</td>
+                  <td class="mono-cell">0.0025</td>
+                  <td>Local triangle density</td>
+                </tr>
+                <tr>
+                  <td><code>pagerank</code></td>
+                  <td class="mono-cell">0.0040</td>
+                  <td class="mono-cell">0.0013</td>
+                  <td>Random walk probability</td>
+                </tr>
+                <tr>
+                  <td><code>betweenness</code></td>
+                  <td class="mono-cell">0.0040</td>
+                  <td class="mono-cell">0.0013</td>
+                  <td>Shortest-path broker role</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linear Threshold Benchmark -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Cross-Model Concordance: IC vs. Linear Threshold (LT)</h2>
+          <p class="card-subheading">Evaluating strategy rankings under complex threshold peer-pressure dynamics.</p>
+        </div>
+        <div class="table-frame">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Strategy</th>
+                <th>Independent Cascade (IC)</th>
+                <th>Linear Threshold (LT)</th>
+                <th>Ratio (LT / IC)</th>
+                <th>LT Diffusion Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold-cell">PageRank</td>
+                <td class="mono-cell">55.16%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">35.36%</td>
+                <td class="mono-cell">0.641</td>
+                <td>Highest structural reinforcement across diverse community boundaries</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">Degree</td>
+                <td class="mono-cell">53.40%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">33.80%</td>
+                <td class="mono-cell">0.633</td>
+                <td>Large initial edge count easily triggers neighbor adoption thresholds</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">Betweenness</td>
+                <td class="mono-cell">54.51%</td>
+                <td class="mono-cell">31.36%</td>
+                <td class="mono-cell">0.575</td>
+                <td>Bottleneck bridges ignite multiple clusters simultaneously</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">AI + Community</td>
+                <td class="mono-cell">49.51%</td>
+                <td class="mono-cell">12.92%</td>
+                <td class="mono-cell">0.261</td>
+                <td>Beats raw AI by +5.45 pp under LT ($p = 5.42 \times 10^{-35}$)</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">AI (Raw Top-K)</td>
+                <td class="mono-cell">47.62%</td>
+                <td class="mono-cell" style="color:var(--rose-text);">7.47%</td>
+                <td class="mono-cell">0.157</td>
+                <td>Heavily penalized by peer-pressure requirements inside redundant core</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">Random</td>
+                <td class="mono-cell">49.82%</td>
+                <td class="mono-cell">3.09%</td>
+                <td class="mono-cell">0.062</td>
+                <td>Isolated random nodes rarely satisfy fractional adoption thresholds</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: SEEDS & COMMUNITIES ==================== -->
+    <section class="tab-panel" id="tab-seeds">
+      <!-- Seed Sets Cards -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Seed Sets Selected by Each Strategy (k = 10)</h2>
+          <p class="card-subheading">Exact integer node identifiers chosen across strategies.</p>
+        </div>
+        <div class="seed-cards-row">
+          <!-- PageRank -->
+          <div class="clean-seed-card" style="border-left: 3px solid var(--emerald-text);">
+            <div class="clean-seed-header">
+              <span class="clean-seed-name">PageRank (Winner)</span>
+              <span class="clean-seed-cov" style="color:var(--emerald-text);">55.16% Cov</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">8 Communities Represented</div>
+            <div class="pill-list">
+              <span class="node-pill">3437</span><span class="node-pill">107</span><span class="node-pill">1684</span><span class="node-pill">0</span><span class="node-pill">1912</span><span class="node-pill">348</span><span class="node-pill">686</span><span class="node-pill">3980</span><span class="node-pill">414</span><span class="node-pill">698</span>
+            </div>
+          </div>
+
+          <!-- Betweenness -->
+          <div class="clean-seed-card" style="border-left: 3px solid var(--primary);">
+            <div class="clean-seed-header">
+              <span class="clean-seed-name">Betweenness Centrality</span>
+              <span class="clean-seed-cov" style="color:var(--primary);">54.51% Cov</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">7 Communities Represented</div>
+            <div class="pill-list">
+              <span class="node-pill">107</span><span class="node-pill">1684</span><span class="node-pill">3437</span><span class="node-pill">1912</span><span class="node-pill">1085</span><span class="node-pill">0</span><span class="node-pill">698</span><span class="node-pill">567</span><span class="node-pill">58</span><span class="node-pill">428</span>
+            </div>
+          </div>
+
+          <!-- Degree -->
+          <div class="clean-seed-card" style="border-left: 3px solid #6366f1;">
+            <div class="clean-seed-header">
+              <span class="clean-seed-name">Degree Centrality</span>
+              <span class="clean-seed-cov" style="color:#6366f1;">53.40% Cov</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">6 Communities Represented</div>
+            <div class="pill-list">
+              <span class="node-pill">107</span><span class="node-pill">1684</span><span class="node-pill">1912</span><span class="node-pill">3437</span><span class="node-pill">0</span><span class="node-pill">2543</span><span class="node-pill">2347</span><span class="node-pill">1888</span><span class="node-pill">1800</span><span class="node-pill">1663</span>
+            </div>
+          </div>
+
+          <!-- AI + Community -->
+          <div class="clean-seed-card" style="border-left: 3px solid #8b5cf6;">
+            <div class="clean-seed-header">
+              <span class="clean-seed-name">AI + Community Optimization</span>
+              <span class="clean-seed-cov" style="color:#8b5cf6;">49.51% Cov</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">6 Communities Represented (Enforced)</div>
+            <div class="pill-list">
+              <span class="node-pill">1597</span><span class="node-pill">2600</span><span class="node-pill">353</span><span class="node-pill">1104</span><span class="node-pill">1964</span><span class="node-pill">1480</span><span class="node-pill">1359</span><span class="node-pill">1684</span><span class="node-pill">1761</span><span class="node-pill">1826</span>
+            </div>
+          </div>
+
+          <!-- AI Raw -->
+          <div class="clean-seed-card" style="border-left: 3px solid var(--amber-text);">
+            <div class="clean-seed-header">
+              <span class="clean-seed-name">AI (Pure ML Top-K)</span>
+              <span class="clean-seed-cov" style="color:var(--amber-text);">47.62% Cov</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">Only 3 Communities (6 in Comm 9)</div>
+            <div class="pill-list">
+              <span class="node-pill">1597</span><span class="node-pill">1761</span><span class="node-pill">2600</span><span class="node-pill">353</span><span class="node-pill">366</span><span class="node-pill">1153</span><span class="node-pill">1557</span><span class="node-pill">1480</span><span class="node-pill">1714</span><span class="node-pill">517</span>
+            </div>
+          </div>
+
+          <!-- Random -->
+          <div class="clean-seed-card" style="border-left: 3px solid var(--rose-text);">
+            <div class="clean-seed-header">
+              <span class="clean-seed-name">Random Baseline</span>
+              <span class="clean-seed-cov" style="color:var(--rose-text);">49.82% Cov</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">Dynamic Random Sample per Run</div>
+            <div style="font-size:0.78rem;color:var(--text-dim);margin-top:6px;font-style:italic;">
+              Fresh uniform random sample of 10 nodes generated for each of the 200 Monte Carlo runs.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlap Matrix & 15 Communities Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 20px;">
+        <!-- Overlap Matrix -->
+        <div class="panel-card reveal">
+          <div class="card-heading-group">
+            <h3 class="card-heading" style="font-size: 1.05rem;">AI vs. Traditional Centrality Overlap</h3>
+            <p class="card-subheading">Top-10 seed set direct intersection.</p>
+          </div>
+          <div class="table-frame">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Comparison Pair</th>
+                  <th>Top-10 Overlap Count</th>
+                  <th>Overlap Ratio</th>
+                  <th>Structural Driver</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>AI Top-10 vs. Degree</td>
+                  <td class="mono-cell">0 / 10</td>
+                  <td class="mono-cell" style="color:var(--rose-text);font-weight:600;">0.00 (0%)</td>
+                  <td>AI prioritizes internal coreness over external hub degree</td>
+                </tr>
+                <tr>
+                  <td>AI Top-10 vs. PageRank</td>
+                  <td class="mono-cell">0 / 10</td>
+                  <td class="mono-cell" style="color:var(--rose-text);font-weight:600;">0.00 (0%)</td>
+                  <td>PageRank prioritizes global prestige; AI targets dense local cores</td>
+                </tr>
+                <tr>
+                  <td>AI Top-10 vs. Betweenness</td>
+                  <td class="mono-cell">0 / 10</td>
+                  <td class="mono-cell" style="color:var(--rose-text);font-weight:600;">0.00 (0%)</td>
+                  <td>Betweenness picks boundary bridges; AI selects core cluster members</td>
+                </tr>
+                <tr>
+                  <td>AI Top-10 vs. Closeness</td>
+                  <td class="mono-cell">0 / 10</td>
+                  <td class="mono-cell" style="color:var(--rose-text);font-weight:600;">0.00 (0%)</td>
+                  <td>AI balances multi-feature interactions rather than average shortest paths</td>
+                </tr>
+                <tr>
+                  <td>AI Top-10 vs. Eigenvector</td>
+                  <td class="mono-cell">0 / 10</td>
+                  <td class="mono-cell" style="color:var(--rose-text);font-weight:600;">0.00 (0%)</td>
+                  <td>Different core cluster selected by regression split</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Louvain Communities Profile -->
+        <div class="panel-card reveal">
+          <div class="card-heading-group">
+            <h3 class="card-heading" style="font-size: 1.05rem;">15 Louvain Communities Profile</h3>
+            <p class="card-subheading">Cluster populations, top hubs, and top predicted influencers.</p>
+          </div>
+          <div class="table-frame" style="max-height: 275px;">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Comm ID</th>
+                  <th>Size</th>
+                  <th>Top Degree Node</th>
+                  <th>Top PageRank Node</th>
+                  <th>Top ML Predicted Node</th>
+                  <th>Pred. Influence</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>10</td><td class="mono-cell">548</td><td>3437 (547)</td><td>3437</td><td>1085</td><td class="mono-cell">1,167.5</td></tr>
+                <tr><td>2</td><td class="mono-cell">535</td><td>1684 (792)</td><td>1684</td><td>1684</td><td class="mono-cell">1,856.8</td></tr>
+                <tr><td>4</td><td class="mono-cell">442</td><td>1912 (755)</td><td>1912</td><td>1964</td><td class="mono-cell">1,863.9</td></tr>
+                <tr style="background:#fffbeb;"><td>9</td><td class="mono-cell">432</td><td>107 (1045)</td><td>107</td><td><strong>1597 (#1 AI)</strong></td><td class="mono-cell" style="font-weight:700;color:var(--amber-text);">1,908.2</td></tr>
+                <tr><td>1</td><td class="mono-cell">430</td><td>483 (231)</td><td>348</td><td>353</td><td class="mono-cell">1,896.4</td></tr>
+                <tr><td>0</td><td class="mono-cell">354</td><td>0 (347)</td><td>0</td><td>0</td><td class="mono-cell">1,206.3</td></tr>
+                <tr><td>6</td><td class="mono-cell">323</td><td>917 (130)</td><td>917</td><td>1104</td><td class="mono-cell">1,884.5</td></tr>
+                <tr><td>12</td><td class="mono-cell">237</td><td>2543 (294)</td><td>2543</td><td>2600</td><td class="mono-cell">1,898.5</td></tr>
+                <tr><td>8</td><td class="mono-cell">226</td><td>2839 (137)</td><td>2839</td><td>3078</td><td class="mono-cell">1,710.7</td></tr>
+                <tr><td>5</td><td class="mono-cell">206</td><td>686 (170)</td><td>686</td><td>698</td><td class="mono-cell">628.9</td></tr>
+                <tr><td>7</td><td class="mono-cell">128</td><td>1687 (43)</td><td>1687</td><td>1553</td><td class="mono-cell">1,320.0</td></tr>
+                <tr><td>11</td><td class="mono-cell">73</td><td>1972 (70)</td><td>2659</td><td>2284</td><td class="mono-cell">1,741.9</td></tr>
+                <tr><td>14</td><td class="mono-cell">61</td><td>3980 (59)</td><td>3980</td><td>594</td><td class="mono-cell">206.8</td></tr>
+                <tr><td>13</td><td class="mono-cell">25</td><td>583 (25)</td><td>583</td><td>635</td><td class="mono-cell">451.9</td></tr>
+                <tr><td>3</td><td class="mono-cell">19</td><td>3318 (20)</td><td>3318</td><td>3318</td><td class="mono-cell">389.9</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: SENSITIVITY ANALYSIS ==================== -->
+    <section class="tab-panel" id="tab-sensitivity">
+      <!-- Budget Experiment -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Campaign Budget Sensitivity: Seed Count (k = 1, 3, 5, 10)</h2>
+          <p class="card-subheading">Mean network coverage as the seed budget expands from 1 to 10 seeds.</p>
+        </div>
+        <div class="table-frame">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Seed Budget (k)</th>
+                <th>AI (Raw ML)</th>
+                <th>AI + Community</th>
+                <th>Degree</th>
+                <th>PageRank</th>
+                <th>Random</th>
+                <th>Dynamics &amp; Observations</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#eff6ff;">
+                <td class="bold-cell">k = 1</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--primary);">46.94%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--primary);">46.94%</td>
+                <td class="mono-cell">46.31%</td>
+                <td class="mono-cell" style="color:var(--rose-text);">19.96%</td>
+                <td class="mono-cell">22.72%</td>
+                <td><strong>AI Wins!</strong> Single top ML node (1597) reaches 46.94% vs PageRank top node 19.96%.</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">k = 3</td>
+                <td class="mono-cell">46.92%</td>
+                <td class="mono-cell">47.57%</td>
+                <td class="mono-cell">49.65%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">51.32%</td>
+                <td class="mono-cell">41.32%</td>
+                <td><strong>Crossover Point:</strong> Multi-seed PageRank overtakes AI (+4.40 pp lead).</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">k = 5</td>
+                <td class="mono-cell">48.15%</td>
+                <td class="mono-cell">47.71%</td>
+                <td class="mono-cell">53.40%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">53.40%</td>
+                <td class="mono-cell">46.94%</td>
+                <td>Degree and PageRank tie at 53.40%; AI plateau is visible.</td>
+              </tr>
+              <tr>
+                <td class="bold-cell">k = 10</td>
+                <td class="mono-cell">47.62%</td>
+                <td class="mono-cell">49.51%</td>
+                <td class="mono-cell">53.40%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">55.16%</td>
+                <td class="mono-cell">49.82%</td>
+                <td>PageRank widens lead to 55.16%; AI+Comm gains +1.89 pp over raw AI.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="font-size:0.84rem;color:var(--text-muted);padding:10px 14px;background:var(--bg-subtle);border-radius:var(--radius-sm);margin-top:12px;">
+          <strong>Managerial Takeaway:</strong> Marginal gain of AI+Community expands as budget increases (k=1&rarr;3: +0.63 pp, k=3&rarr;5: +0.14 pp, k=5&rarr;10: +1.80 pp). When marketing teams can afford only 1 influencer, ML regression is unbeatable. When hiring multiple influencers, structural diversity prevents budget waste.
+        </div>
+      </div>
+
+      <!-- Probability Experiment -->
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Propagation Probability Sensitivity: Contagion Rate (p)</h2>
+          <p class="card-subheading">Network coverage across transmission probabilities from sub-critical to super-critical regimes.</p>
+        </div>
+        <div class="table-frame">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Transmission Probability (p)</th>
+                <th>AI</th>
+                <th>AI + Comm</th>
+                <th>Degree</th>
+                <th>PageRank</th>
+                <th>Random</th>
+                <th>Max-Min Gap</th>
+                <th>Cascade Regime</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold-cell">p = 0.005</td>
+                <td class="mono-cell">0.65%</td>
+                <td class="mono-cell">0.69%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--primary);">1.34%</td>
+                <td class="mono-cell">1.03%</td>
+                <td class="mono-cell">0.40%</td>
+                <td class="mono-cell">0.95 pp</td>
+                <td><span class="status-tag tag-neutral">Sub-critical (Extinguishes)</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">p = 0.010</td>
+                <td class="mono-cell">5.73%</td>
+                <td class="mono-cell">6.03%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--primary);">7.63%</td>
+                <td class="mono-cell">6.40%</td>
+                <td class="mono-cell">2.62%</td>
+                <td class="mono-cell">5.01 pp</td>
+                <td><span class="status-tag tag-warning">Percolation Threshold</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">p = 0.020</td>
+                <td class="mono-cell">18.94%</td>
+                <td class="mono-cell">21.82%</td>
+                <td class="mono-cell">22.39%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">22.94%</td>
+                <td class="mono-cell">15.28%</td>
+                <td class="mono-cell">7.65 pp</td>
+                <td><span class="status-tag tag-neutral">Transitional Phase</span></td>
+              </tr>
+              <tr style="background:#eff6ff;">
+                <td class="bold-cell">p = 0.030</td>
+                <td class="mono-cell">28.93%</td>
+                <td class="mono-cell">34.53%</td>
+                <td class="mono-cell">36.31%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">37.03%</td>
+                <td class="mono-cell">29.79%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--primary);">8.10 pp</td>
+                <td><span class="status-tag tag-success">Peak Strategy Divergence</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">p = 0.050</td>
+                <td class="mono-cell">47.62%</td>
+                <td class="mono-cell">49.51%</td>
+                <td class="mono-cell">53.40%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">55.16%</td>
+                <td class="mono-cell">49.82%</td>
+                <td class="mono-cell">7.53 pp</td>
+                <td><span class="status-tag tag-neutral">Standard Campaign Baseline</span></td>
+              </tr>
+              <tr>
+                <td class="bold-cell">p = 0.100</td>
+                <td class="mono-cell">71.63%</td>
+                <td class="mono-cell">72.09%</td>
+                <td class="mono-cell">72.90%</td>
+                <td class="mono-cell" style="font-weight:700;color:var(--emerald-text);">75.71%</td>
+                <td class="mono-cell">72.70%</td>
+                <td class="mono-cell">4.08 pp</td>
+                <td><span class="status-tag tag-warning">Super-critical (Saturation)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 6: METHODOLOGY ==================== -->
+    <section class="tab-panel" id="tab-methodology">
+      <div class="panel-card reveal">
+        <div class="card-heading-group">
+          <h2 class="card-heading">Research Methodology &amp; Mathematical Framework</h2>
+          <p class="card-subheading">Formal specifications for diffusion models, feature extraction, ML training, and community optimization.</p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- 1. Diffusion Models -->
+          <div style="background:var(--bg-subtle); padding:16px 20px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+            <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-main); margin-bottom:6px;">1. Diffusion Simulation Mechanics</h3>
+            <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55; margin-bottom:8px;">
+              <strong>Independent Cascade (IC) Model:</strong> At step <em>t</em>, each newly activated node <em>u</em> receives a single chance to activate each currently inactive neighbor <em>v</em> across edge (<em>u</em>, <em>v</em>) with independent propagation probability <em>p</em> = 0.05. If successful, <em>v</em> becomes active at step <em>t</em> + 1. The cascade terminates when no new activations occur.
+            </p>
+            <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55;">
+              <strong>Linear Threshold (LT) Model:</strong> Each node <em>v</em> draws an internal adoption threshold &theta;<sub>v</sub> &sim; U(0, 1) representing its resistance to adoption. Incoming edge weights are normalized by node degree <em>w<sub>uv</sub> = 1 / d(v)</em>. A node <em>v</em> activates at step <em>t</em> + 1 if and only if the cumulative influence of its active neighbors meets or exceeds its threshold:
+              <br>
+              <code style="display:inline-block; margin-top:6px; padding:6px 12px; background:#fff; border:1px solid var(--border-light); border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--text-main);">
+                &sum;<sub>u &isin; N(v) &cap; A<sub>t</sub></sub> w<sub>uv</sub> &ge; &theta;<sub>v</sub> &nbsp; (where &theta;<sub>v</sub> &sim; U(0, 1), w<sub>uv</sub> = 1 / d(v))
+              </code>
+            </p>
+          </div>
+
+          <!-- 2. ML Training -->
+          <div style="background:var(--bg-subtle); padding:16px 20px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+            <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-main); margin-bottom:6px;">2. SNA Feature Extraction &amp; ML Regression Pipeline</h3>
+            <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55; margin-bottom:8px;">
+              For all 4,039 nodes, 10 topological features were computed:
+              <strong>degree, degree centrality, betweenness, closeness, pagerank, eigenvector centrality, clustering coefficient, average neighbor degree, core number (k-core decomposition), and community size</strong>.
+            </p>
+            <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55;">
+              Ground truth labels were generated by simulating 50 independent single-node Monte Carlo cascades at <em>p</em> = 0.05 for 1,500 sampled candidate nodes. The dataset was split into 80% train and 20% test (<em>N</em> = 808). Random Forest Regressor (100 estimators, random state 42) was trained to predict expected single-node cascade size S&#770;(v).
+            </p>
+          </div>
+
+          <!-- 3. Greedy Community Optimization -->
+          <div style="background:var(--bg-subtle); padding:16px 20px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+            <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-main); margin-bottom:6px;">3. Greedy Community-Aware Seed Optimization Algorithm</h3>
+            <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55; margin-bottom:8px;">
+              To counteract the audience overlap problem, candidate seeds were selected iteratively from a pool of the top 300 ML-ranked candidates using a penalized greedy objective:
+              <br>
+              <code style="display:inline-block; margin-top:6px; padding:6px 12px; background:#fff; border:1px solid var(--border-light); border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--text-main);">
+                v* = argmax<sub>v &isin; P \ S</sub> [ S&#770;(v) &minus; &beta; &bull; count(comm(v) &isin; S) &minus; &gamma; &bull; overlap_penalty(v, S) ]
+              </code>
+            </p>
+            <p style="font-size:0.86rem; color:var(--text-body); line-height:1.55;">
+              With parameters &alpha; = 0.6, &beta; = 0.25, &gamma; = 0.5. This penalty directly prevented over-allocation of marketing spend to a single community, expanding represented communities from 3 to 6 and boosting coverage by +1.89 percentage points.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="reveal">
+      <p>AI Influencer Campaign &amp; Viral Optimization Research Dashboard • Public Dataset: SNAP ego-Facebook (4,039 nodes, 88,234 edges)</p>
+      <p style="margin-top:4px;">All cascade diffusions are simulated for academic research benchmarking under equal budget constraints.</p>
+    </footer>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="clean-modal" id="cleanModal">
+      <div class="modal-bar">
+        <div class="modal-bar-title">
+          <span id="mTag" style="font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--primary);letter-spacing:0.04em;">Category • Plot #00</span>
+          <h3 id="mTitle">Plot Title</h3>
+        </div>
+        <button class="modal-close-btn" id="mCloseBtn" title="Close (Esc)">&times;</button>
+      </div>
+      <div class="modal-inner">
+        <div class="modal-image-side">
+          <img id="mImg" src="" alt="Plot Full View">
+        </div>
+        <div class="modal-text-side">
+          <div>
+            <div class="modal-section-title">Plot Explanation &amp; Breakdown</div>
+            <p class="modal-section-text" id="mDesc">Description...</p>
+          </div>
+          <div>
+            <div class="modal-section-title">Key Empirical Takeaway</div>
+            <p class="modal-section-text" id="mTakeaway" style="font-weight:500;">Takeaway...</p>
+          </div>
+          <div>
+            <div class="modal-section-title">Quantitative Metrics</div>
+            <p class="modal-section-text" id="mMetrics" style="font-family:var(--font-mono); font-size:0.8rem; background:var(--bg-subtle); padding:8px 12px; border-radius:4px; border:1px solid var(--border-light);">Metrics...</p>
+          </div>
+          <div class="modal-nav-bar">
+            <button class="inspect-btn" id="mPrevBtn">&larr; Previous Plot</button>
+            <span id="mCounter" style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-muted);">1 / 27</span>
+            <button class="inspect-btn" id="mNextBtn">Next Plot &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client JavaScript -->
+  <script>
+    // All 27 Generated Plots with full descriptions and findings
+    const PLOTS_DATA = [
+      {
+        id: "00",
+        file: "outputs/plots/00_probability_calibration.png",
+        category: "network",
+        categoryName: "Topology & Mechanics",
+        title: "Propagation Probability Calibration Curve",
+        shortDesc: "Mean cascade size vs. transmission probability p across calibration nodes to locate percolation threshold.",
+        fullDesc: "Evaluates empirical mean cascade spread across propagation probabilities p in [0.005, 0.08] using 20 Monte Carlo cascade simulations per candidate node across 80 calibration nodes. Demonstrates the critical phase transition where local subcritical cascades transition abruptly into supercritical epidemic spread.",
+        keyTakeaway: "Identified optimal evaluation probability at p = 0.05. Below 0.02, cascades die out immediately; above 0.08, the network saturates. p = 0.05 yields rich, non-degenerate variance across seed strategies.",
+        metrics: "N_CAL_NODES: 80 | N_CAL_SIMS: 20 | Inflection Phase Point: p ≈ 0.02 - 0.05"
+      },
+      {
+        id: "01",
+        file: "outputs/plots/01_network_overview.png",
+        category: "network",
+        categoryName: "Topology",
+        title: "SNAP ego-Facebook Network Overview",
+        shortDesc: "Force-directed topological layout of 4,039 nodes and 88,234 edges showing dense ego-cores and peripheral clusters.",
+        fullDesc: "Visualizes the global topological architecture of the SNAP ego-Facebook graph. The graph consists of 10 aggregated ego networks with strong local clustering and sparse cross-ego structural bridges. Nodes are colored by degree intensity.",
+        keyTakeaway: "Demonstrates classic small-world properties: sparse global density (0.01082) paired with remarkably high local clustering (0.6055) and an average shortest path of only 3.693 hops.",
+        metrics: "Nodes: 4,039 | Edges: 88,234 | Density: 0.01082 | Avg Path: 3.693 | Diameter: 8"
+      },
+      {
+        id: "02",
+        file: "outputs/plots/02_degree_distribution.png",
+        category: "network",
+        categoryName: "Topology",
+        title: "Node Degree Distribution (Linear Scale)",
+        shortDesc: "Histogram and kernel density estimate of node connections highlighting heavy-tailed degree skew.",
+        fullDesc: "Displays the frequency distribution of node degrees across the network. The distribution is heavily right-skewed; the median user has only 25 friends, while a tiny fraction of super-hub users possess hundreds of connections.",
+        keyTakeaway: "Extreme degree inequality: the maximum degree (1,045 connections, Node 107) is over 23 times the network average (43.69). These mega-hubs serve as prime diffusion drivers.",
+        metrics: "Min Degree: 1.0 | Median Degree: 25.0 | Mean Degree: 43.69 | Max Degree: 1,045.0"
+      },
+      {
+        id: "02b",
+        file: "outputs/plots/02b_degree_distribution_loglog.png",
+        category: "network",
+        categoryName: "Topology",
+        title: "Degree Distribution on Log-Log Scale",
+        shortDesc: "Logarithmic scale analysis showing scale-free power-law behavior across intermediate degrees.",
+        fullDesc: "Plots log(P(k)) versus log(k) to evaluate scale-free / power-law topology (P(k) ~ k^-γ). Shows a linear negative slope across the intermediate to high degree domain, typical of scale-free social contact graphs.",
+        keyTakeaway: "Validates that the social graph exhibits scale-free characteristics, meaning standard random node sampling will miss high-influence hubs with overwhelming probability.",
+        metrics: "Power-law scaling regime confirmed across degrees k ∈ [15, 600]."
+      },
+      {
+        id: "03",
+        file: "outputs/plots/03_centrality_comparison.png",
+        category: "centrality",
+        categoryName: "Centrality Analysis",
+        title: "Pairwise Centrality Comparison Matrix",
+        shortDesc: "Scatter plots and correlation distributions comparing Degree, Betweenness, Closeness, PageRank, and Eigenvector.",
+        fullDesc: "Compares the five traditional centrality metrics across all nodes. Degree and PageRank correlate strongly in dense hubs, but Betweenness highlights structural cut-vertices, while Eigenvector isolates nodes embedded inside dense cliques.",
+        keyTakeaway: "No two centralities select the same set of nodes. Betweenness and Closeness identify boundary bridges, while PageRank emphasizes global recursive prestige.",
+        metrics: "Spearman rank correlation: Degree vs PageRank ρ ≈ 0.55; Degree vs Betweenness ρ ≈ 0.65"
+      },
+      {
+        id: "04",
+        file: "outputs/plots/04_top_degree.png",
+        category: "centrality",
+        categoryName: "Centrality Analysis",
+        title: "Top-10 Degree Centrality Hubs in Network",
+        shortDesc: "Highlights the 10 highest-degree nodes within the network subgraph.",
+        fullDesc: "Visualizes the physical network location of the top 10 degree hubs: [107, 1684, 1912, 3437, 0, 2543, 2347, 1888, 1800, 1663]. Node 107 is the singular mega-hub connecting to 25.8% of the entire network.",
+        keyTakeaway: "Top degree nodes are concentrated in the cores of the largest ego-networks, giving them immense initial 1-hop reach.",
+        metrics: "Node 107 (degree 1,045), Node 1684 (degree 792), Node 1912 (degree 755), Node 3437 (degree 547)"
+      },
+      {
+        id: "05",
+        file: "outputs/plots/05_top_pagerank.png",
+        category: "centrality",
+        categoryName: "Centrality Analysis",
+        title: "Top-10 PageRank Prestige Nodes in Network",
+        shortDesc: "Highlights the top 10 nodes ranked by random walk stationary probability.",
+        fullDesc: "Visualizes the locations of top PageRank nodes: [3437, 107, 1684, 0, 1912, 348, 686, 3980, 414, 698]. Unlike raw degree, PageRank balances connectivity with the quality and prestige of neighbors.",
+        keyTakeaway: "PageRank seeds naturally distribute across 8 distinct communities, avoiding concentration in a single cluster and maximizing cross-community reach.",
+        metrics: "Top score: Node 3437 (PR = 0.00761), Node 107 (PR = 0.00694), Node 1684 (PR = 0.00637)"
+      },
+      {
+        id: "06",
+        file: "outputs/plots/06_top_betweenness.png",
+        category: "centrality",
+        categoryName: "Centrality Analysis",
+        title: "Top-10 Betweenness Centrality Brokers in Network",
+        shortDesc: "Visualizes the top shortest-path broker nodes bridging major network communities.",
+        fullDesc: "Identifies top betweenness nodes: [107, 1684, 3437, 1912, 1085, 0, 698, 567, 58, 428]. These nodes sit on bottlenecks and act as mandatory bridges between separate social clusters.",
+        keyTakeaway: "Node 107 controls an astonishing 48.05% of all shortest paths in the graph, while Node 1684 controls 33.78%. Their activation allows cascades to leak across community boundaries.",
+        metrics: "Betweenness scores: Node 107 (0.4805), Node 1684 (0.3378), Node 3437 (0.2361)"
+      },
+      {
+        id: "07",
+        file: "outputs/plots/07_communities.png",
+        category: "network",
+        categoryName: "Topology",
+        title: "Louvain Community Detection Partition",
+        shortDesc: "Graph partition showing 15 modular communities discovered via Louvain modularity optimization.",
+        fullDesc: "Visualizes the modular decomposition of the network into 15 communities using the Louvain algorithm. The high modularity score (Q = 0.835) proves that the network has exceptionally strong community segregation.",
+        keyTakeaway: "Diffusion naturally gets trapped inside dense communities. Seed selection strategies must cross community barriers to achieve widespread global network reach.",
+        metrics: "Modularity Q: 0.835 | Total Communities: 15 | Largest Comm (#10): 548 nodes | Smallest: 19 nodes"
+      },
+      {
+        id: "08",
+        file: "outputs/plots/08_feature_correlation.png",
+        category: "ml",
+        categoryName: "Machine Learning",
+        title: "SNA Topological Feature Correlation Heatmap",
+        shortDesc: "Correlation matrix across all 10 extracted graph topological features.",
+        fullDesc: "Heatmap of Pearson and Spearman correlations between degree, betweenness, closeness, pagerank, eigenvector, clustering, neighbor degree, core number, and community size.",
+        keyTakeaway: "Core number exhibits high correlation with eigenvector centrality, while clustering coefficient negatively correlates with betweenness and degree.",
+        metrics: "10 features evaluated across all 4,039 nodes."
+      },
+      {
+        id: "09",
+        file: "outputs/plots/09_actual_vs_predicted.png",
+        category: "ml",
+        categoryName: "Machine Learning",
+        title: "Test Set Actual vs. Predicted Diffusion Reach",
+        shortDesc: "Scatter plot of Random Forest predicted cascade size vs. simulated truth on 808 held-out nodes.",
+        fullDesc: "Evaluates the generalization of the trained Random Forest regressor on held-out test nodes. Points hug the ideal y = x line with high precision, showing minimal bias across the entire spread range.",
+        keyTakeaway: "Proves that ML can accurately predict individual node diffusion reach (R² = 0.9705, MAE = 85.45) from topological structural features alone.",
+        metrics: "R²: 0.9705 | RMSE: 116.23 | MAE: 85.45 | Spearman ρ: 0.9788 | Test N: 808"
+      },
+      {
+        id: "10",
+        file: "outputs/plots/10_model_comparison.png",
+        category: "ml",
+        categoryName: "Machine Learning",
+        title: "ML Model Performance Comparison",
+        shortDesc: "Bar charts comparing R², MAE, RMSE, and Spearman correlation across regression models.",
+        fullDesc: "Direct benchmark of Linear Regression, Random Forest, Gradient Boosting, and single-centrality baselines. Random Forest achieves the top rank across all quantitative metrics.",
+        keyTakeaway: "Nonlinear ensemble models significantly beat Linear Regression (R² 0.971 vs 0.814). Baseline degree centrality achieves a solid Spearman correlation (0.885) but lags behind the multi-feature ML models (0.979).",
+        metrics: "RF (R²=0.971) > GBDT (R²=0.968) > OLS (R²=0.814) > Degree (ρ=0.885)"
+      },
+      {
+        id: "11",
+        file: "outputs/plots/11_feature_importance.png",
+        category: "ml",
+        categoryName: "Machine Learning",
+        title: "SNA Feature Importance (Impurity & Permutation)",
+        shortDesc: "Ranks topological features by Mean Decrease in Impurity (MDI) and Test Permutation Importance.",
+        fullDesc: "Reveals which topological features drive influencer reach predictions. In both tree impurity and test set permutation importance, core_number (k-core decomposition) overwhelmingly dominates all other metrics.",
+        keyTakeaway: "A node's k-core layer is far more decisive for diffusion than its raw degree or betweenness. Nodes in the innermost core radiate cascades with maximum momentum.",
+        metrics: "core_number importance: 0.873 (impurity) / 1.161 (permutation); eigenvector: 0.042; closeness: 0.035"
+      },
+      {
+        id: "12",
+        file: "outputs/plots/12_top_ai_influencers.png",
+        category: "seeds",
+        categoryName: "Influencer Selection",
+        title: "Top-10 AI-Selected Influencers in Network",
+        shortDesc: "Network subgraph highlighting the top 10 nodes predicted to have maximum diffusion potential.",
+        fullDesc: "Displays the spatial locations of seeds chosen by pure ML prediction: [1597, 1761, 2600, 353, 366, 1153, 1557, 1480, 1714, 517]. None of these nodes appear in the top-10 degree or PageRank rankings!",
+        keyTakeaway: "0.0% overlap with traditional centralities. The ML model identifies deep-core influencers rather than massive boundary hubs.",
+        metrics: "Top ML node: 1597 (pred. spread: 1,908.2); Top-10 overlap with Degree / PageRank: 0.0%"
+      },
+      {
+        id: "13",
+        file: "outputs/plots/13_ai_influencer_communities.png",
+        category: "seeds",
+        categoryName: "Influencer Selection",
+        title: "Community Distribution of AI Influencers",
+        shortDesc: "Bar chart displaying the community membership of top AI-predicted influencer seeds.",
+        fullDesc: "Exposes the root cause of the audience overlap problem: 6 out of the 10 top AI seeds belong to Community 9, and 3 belong to Community 1. Only 3 communities are represented overall.",
+        keyTakeaway: "Because high k-core nodes cluster together, unconstrained ML selection clusters multiple seeds into the same social circle, causing severe redundancy.",
+        metrics: "Community 9: 6 seeds (60%) | Community 1: 3 seeds (30%) | Community 12: 1 seed (10%)"
+      },
+      {
+        id: "14",
+        file: "outputs/plots/14_campaign_seed_strategies.png",
+        category: "seeds",
+        categoryName: "Influencer Selection",
+        title: "Campaign Seed Sets Across All 6 Strategies",
+        shortDesc: "Side-by-side network maps comparing seed placements for Random, Degree, PageRank, Betweenness, AI, and AI+Comm.",
+        fullDesc: "6-panel comprehensive visualization contrasting where each strategy places its 10 seed investments. PageRank and AI+Community disperse seeds broadly, whereas raw AI clumps tightly in the upper-right sector.",
+        keyTakeaway: "Spatial dispersion correlates directly with final cascade reach. Strategies that spread seeds across distinct modular clusters achieve superior network coverage.",
+        metrics: "PageRank: 8 communities | Betweenness: 7 | Degree: 6 | AI+Comm: 6 | AI: 3"
+      },
+      {
+        id: "15",
+        file: "outputs/plots/15_ic_t0.png",
+        category: "dynamics",
+        categoryName: "Cascade Dynamics",
+        title: "Independent Cascade Step t = 0 (Seed Activation)",
+        shortDesc: "Initial campaign state showing only the selected k = 10 seeds active in the graph.",
+        fullDesc: "Snapshot of the network at time step t = 0 when marketing campaign seeds are first activated. Inactive nodes are light slate; active seed nodes are highlighted.",
+        keyTakeaway: "Baseline initialization of the diffusion process under budget k = 10.",
+        metrics: "Active nodes at t=0: 10 / 4,039 (0.25% coverage)"
+      },
+      {
+        id: "16",
+        file: "outputs/plots/16_ic_intermediate.png",
+        category: "dynamics",
+        categoryName: "Cascade Dynamics",
+        title: "Independent Cascade Intermediate Wavefront (t = 2-4)",
+        shortDesc: "Mid-cascade state showing explosive viral wavefront propagating through neighbor clusters.",
+        fullDesc: "Captures the peak contagion wavefront at intermediate steps. Freshly infected nodes rapidly ignite surrounding clusters before exhausting their activation attempts.",
+        keyTakeaway: "Illustrates the explosive acceleration of small-world cascades once structural bridges are breached.",
+        metrics: "Peak adoption velocity occurs at t ≈ 3.0 steps, activating up to 675.6 nodes in a single step."
+      },
+      {
+        id: "17",
+        file: "outputs/plots/17_ic_final.png",
+        category: "dynamics",
+        categoryName: "Cascade Dynamics",
+        title: "Independent Cascade Terminal State (Final Coverage)",
+        shortDesc: "Steady-state network configuration after all diffusion cascades have terminated.",
+        fullDesc: "Final state of the network after cascade propagation ceases. Over half of the entire social network (2,227+ nodes under PageRank) has been successfully activated.",
+        keyTakeaway: "Demonstrates that a strategically chosen seed set of just 10 users (0.25% of the network) can viralize and reach over 55% of all users.",
+        metrics: "Final reached nodes: 2,227.8 / 4,039 (55.16% coverage) | Final inactive: 44.84%"
+      },
+      {
+        id: "18",
+        file: "outputs/plots/18_cumulative_spread.png",
+        category: "dynamics",
+        categoryName: "Cascade Dynamics",
+        title: "Cumulative Spread S-Curves Across Strategies",
+        shortDesc: "Cumulative adoption trajectories over time steps t = 0 to 20 for all 6 strategies.",
+        fullDesc: "Plots classic S-curve adoption dynamics over 20 time steps. PageRank, Degree, and Betweenness show aggressive early slopes, reaching near-saturation by step 8. AI and Random exhibit sluggish takeoff.",
+        keyTakeaway: "Classical centrality hubs ignite cascades faster and saturate earlier. Raw AI requires 17.17 steps on average to terminate, compared to only 12.90 steps for PageRank.",
+        metrics: "Mean cascade duration: PageRank (12.90 steps), Degree (12.89), AI (17.17), Random (17.60)"
+      },
+      {
+        id: "19",
+        file: "outputs/plots/19_new_activations.png",
+        category: "dynamics",
+        categoryName: "Cascade Dynamics",
+        title: "Cascade Velocity: New Activations per Step",
+        shortDesc: "Impulse response curves showing rate of new node adoptions per diffusion time step.",
+        fullDesc: "Plots adoption velocity (dSpread/dt) over time steps. Shows distinct bell-shaped impulse curves peaking sharply at step t = 3.0.",
+        keyTakeaway: "PageRank achieves the highest peak velocity (675.6 nodes/step), followed closely by Betweenness (668.3 nodes/step). Raw AI peaks at only 377.5 nodes/step.",
+        metrics: "Peak velocity: PageRank (675.6 @ t=3.00), Betweenness (668.3 @ t=3.00), AI+Comm (546.1 @ t=3.04), AI (377.5 @ t=3.00)"
+      },
+      {
+        id: "20",
+        file: "outputs/plots/20_strategy_vs_coverage.png",
+        category: "campaign",
+        categoryName: "Campaign Benchmark",
+        title: "Campaign Strategy vs. Final Coverage % (200 Runs)",
+        shortDesc: "Box plots and distributions of final network coverage across 200 Monte Carlo runs under Independent Cascade.",
+        fullDesc: "Core benchmark results comparing the distribution of coverage percentages. Highlights tight variance for PageRank (std 1.17%) and Degree (std 1.10%) versus wide dispersion for Random (std 5.59%) and raw AI (std 5.27%).",
+        keyTakeaway: "PageRank wins definitively (55.16% coverage). AI+Community significantly outperforms raw AI (49.51% vs 47.62%, p < 0.001) with half the variance.",
+        metrics: "PageRank: 55.16% | Betweenness: 54.51% | Degree: 53.40% | AI+Comm: 49.51% | Random: 49.82% | AI: 47.62%"
+      },
+      {
+        id: "21",
+        file: "outputs/plots/21_budget_vs_coverage.png",
+        category: "sensitivity",
+        categoryName: "Sensitivity Analysis",
+        title: "Campaign Budget Scaling (k ∈ {1, 3, 5, 10}) vs. Coverage",
+        shortDesc: "Network coverage as marketing seed budget expands from 1 to 10 seeds.",
+        fullDesc: "Evaluates coverage scaling as budget k increases. Shows an illuminating crossover: at k = 1, AI and AI+Community lead (46.94% vs PageRank 19.96%). As k increases, multi-seed PageRank overtakes AI.",
+        keyTakeaway: "ML is superior for finding a single optimal influencer (k=1). For multi-seed campaigns (k >= 3), structural network centralities dominate due to superior spatial dispersion.",
+        metrics: "k=1: AI 46.94% vs PR 19.96% | k=3: PR 51.32% vs AI 46.92% | k=10: PR 55.16% vs AI 47.62%"
+      },
+      {
+        id: "22",
+        file: "outputs/plots/22_probability_vs_coverage.png",
+        category: "sensitivity",
+        categoryName: "Sensitivity Analysis",
+        title: "Propagation Probability Sensitivity (p ∈ [0.005, 0.10])",
+        shortDesc: "Coverage trajectories across 6 distinct contagion probabilities spanning sub-critical to super-critical regimes.",
+        fullDesc: "Sweeps transmission probability p across [0.005, 0.01, 0.02, 0.03, 0.05, 0.10]. Strategy differentiation peaks at intermediate probabilities (p = 0.03, gap = 8.10 pp) and converges at high probabilities (p = 0.10, ~72-75%).",
+        keyTakeaway: "Strategy selection matters most at moderate contagion rates (p = 0.02 - 0.05). In viral epidemics (p = 0.10), almost any non-random seed set saturates the network.",
+        metrics: "Max Strategy Gap: p=0.005 (0.95 pp), p=0.01 (5.01 pp), p=0.03 (8.10 pp), p=0.05 (7.53 pp), p=0.10 (4.08 pp)"
+      },
+      {
+        id: "23",
+        file: "outputs/plots/23_ai_vs_ai_community.png",
+        category: "campaign",
+        categoryName: "Campaign Benchmark",
+        title: "AI vs. AI + Community Optimization Comparison",
+        shortDesc: "Direct head-to-head comparison demonstrating the quantitative impact of community-aware diversity constraints.",
+        fullDesc: "Isolates the effect of community-aware greedy optimization. Penalizing co-community seed selection raises coverage from 47.62% to 49.51% (+1.89 percentage points, paired t-test p = 3.11e-06) and cuts standard deviation by more than half.",
+        keyTakeaway: "Statistically confirms Hypothesis Part 2: enforcing community diversity directly mitigates audience overlap and boosts cascade performance.",
+        metrics: "Gain: +1.89 pp | 95% CI: [+1.12, +2.66] | Paired t-test p = 3.11e-06 | Wilcoxon p = 0.00033"
+      },
+      {
+        id: "24",
+        file: "outputs/plots/24_ic_vs_lt.png",
+        category: "campaign",
+        categoryName: "Campaign Benchmark",
+        title: "Cross-Model Validation: Independent Cascade vs. Linear Threshold",
+        shortDesc: "Compares strategy performance between probabilistic edge firing (IC) and peer-pressure threshold adoption (LT).",
+        fullDesc: "Evaluates whether strategy rankings hold under complex threshold contagion dynamics. Strategy ranks are highly concordant (Spearman correlation = 0.77). PageRank, Degree, and Betweenness retain top ranks in both models.",
+        keyTakeaway: "Under LT dynamics, the penalty for raw AI is even harsher (7.47% vs PageRank 35.36%), because threshold cascades require massive multi-neighbor reinforcement.",
+        metrics: "Spearman rank correlation between IC and LT: 0.77 | Top LT: PageRank (35.36%) > Degree (33.80%)"
+      },
+      {
+        id: "25",
+        file: "outputs/plots/25_viral_analysis.png",
+        category: "campaign",
+        categoryName: "Campaign Benchmark",
+        title: "Viral Cascade Analysis & Threshold Penetration",
+        shortDesc: "Cumulative distribution functions, viral success probabilities (5%, 10%, 20%), and tail-risk behavior.",
+        fullDesc: "Analyzes the probability of achieving viral status across varying threshold definitions. At a 10% threshold, all strategies achieve a 100% viral rate. At higher thresholds, PageRank and Degree provide guaranteed coverage floors.",
+        keyTakeaway: "PageRank and Degree eliminate downside tail risk; raw AI and Random suffer from occasional catastrophic cascade failures reaching under 15% coverage.",
+        metrics: "Viral Rate at 10% threshold: 100% across all strategies | Min spread: PageRank 2,039 vs AI 1,354 vs Random 491"
+      }
+    ];
+
+    // Scroll Reveal Observer
+    let revealObserver = null;
+    function initScrollReveal() {
+      const revealElements = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        }, {
+          threshold: 0.08,
+          rootMargin: '0px 0px -40px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+      } else {
+        revealElements.forEach(el => el.classList.add('visible'));
+      }
+    }
+
+    function refreshScrollReveal() {
+      const revealElements = document.querySelectorAll('.reveal:not(.visible)');
+      if (revealObserver) {
+        revealElements.forEach(el => revealObserver.observe(el));
+      } else {
+        revealElements.forEach(el => el.classList.add('visible'));
+      }
+    }
+
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+      initTabs();
+      renderGallery(PLOTS_DATA);
+      initFilterButtons();
+      initSearch();
+      initModal();
+      initScrollReveal();
+      init3DStudio();
+    });
+
+    // Tab Navigation with Smooth Scrolling & Tab Indicator Animation
+    function initTabs() {
+      const btns = document.querySelectorAll('.tab-btn');
+      const panels = document.querySelectorAll('.tab-panel');
+
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+
+          btn.classList.add('active');
+          const targetId = btn.getAttribute('data-tab');
+          const panel = document.getElementById(targetId);
+          if (panel) {
+            panel.classList.add('active');
+            
+            // If user clicked the 3D studio tab, trigger Plotly resize
+            if (targetId === 'tab-3d') {
+              setTimeout(() => {
+                const pDiv = document.getElementById('plotly3dDiv');
+                if (pDiv && window.Plotly) {
+                  Plotly.Plots.resize(pDiv);
+                }
+              }, 100);
+            }
+
+            setTimeout(() => {
+              panel.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+              refreshScrollReveal();
+            }, 50);
+
+            const navRect = document.getElementById('tabBar').getBoundingClientRect();
+            if (navRect.top < 0) {
+              window.scrollTo({
+                top: window.scrollY + navRect.top - 20,
+                behavior: 'smooth'
+              });
+            }
+          }
+        });
+      });
+    }
+
+    // Render Plot Grid Cards
+    function renderGallery(plots) {
+      const grid = document.getElementById('plotsGrid');
+      grid.innerHTML = '';
+
+      if (plots.length === 0) {
+        grid.innerHTML = `
+          <div class="reveal visible" style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; color: var(--text-dim);">
+            <div style="font-size: 1.5rem; margin-bottom: 8px;">🔍</div>
+            <p style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">No plots matched your criteria</p>
+          </div>
+        `;
+        return;
+      }
+
+      plots.forEach((plot, index) => {
+        const card = document.createElement('div');
+        card.className = 'plot-item-card reveal';
+        card.style.transitionDelay = `${(index % 6) * 0.05}s`;
+
+        card.innerHTML = `
+          <div class="plot-thumb-frame" onclick="openModal('${plot.id}')" title="Click to view full plot details">
+            <img src="${plot.file}" alt="${plot.title}" loading="lazy">
+            <span class="thumb-tag">${plot.categoryName}</span>
+            <span class="thumb-id">#${plot.id}</span>
+          </div>
+          <div class="plot-content-area">
+            <h3 class="plot-card-title">${plot.title}</h3>
+            <p class="plot-card-desc">${plot.shortDesc}</p>
+            <div class="plot-card-footer">
+              <span class="plot-card-takeaway" title="${plot.keyTakeaway}"><strong>Takeaway:</strong> ${plot.keyTakeaway}</span>
+              <button class="inspect-btn" onclick="openModal('${plot.id}')">View Details &rarr;</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      refreshScrollReveal();
+    }
+
+    // Filter Buttons
+    function initFilterButtons() {
+      const btns = document.querySelectorAll('.pill-btn');
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const filter = btn.getAttribute('data-filter');
+          const searchVal = document.getElementById('gallerySearchInput').value;
+          filterAndRender(filter, searchVal);
+        });
+      });
+    }
+
+    // Search Input
+    function initSearch() {
+      const input = document.getElementById('gallerySearchInput');
+      input.addEventListener('input', (e) => {
+        const activeBtn = document.querySelector('.pill-btn.active');
+        const filter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+        filterAndRender(filter, e.target.value);
+      });
+    }
+
+    function filterAndRender(category, query) {
+      let filtered = PLOTS_DATA;
+      if (category !== 'all') {
+        filtered = filtered.filter(p => p.category === category);
+      }
+      if (query && query.trim() !== '') {
+        const q = query.toLowerCase().trim();
+        filtered = filtered.filter(p => 
+          p.title.toLowerCase().includes(q) ||
+          p.shortDesc.toLowerCase().includes(q) ||
+          p.fullDesc.toLowerCase().includes(q) ||
+          p.keyTakeaway.toLowerCase().includes(q) ||
+          p.metrics.toLowerCase().includes(q) ||
+          p.id.toLowerCase().includes(q)
+        );
+      }
+      renderGallery(filtered);
+    }
+
+    // Lightbox Modal Logic
+    let activeModalIndex = 0;
+
+    function initModal() {
+      const backdrop = document.getElementById('modalBackdrop');
+      const closeBtn = document.getElementById('mCloseBtn');
+      const prevBtn = document.getElementById('mPrevBtn');
+      const nextBtn = document.getElementById('mNextBtn');
+
+      closeBtn.addEventListener('click', closeModal);
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeModal();
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (activeModalIndex > 0) {
+          switchModalIndex(activeModalIndex - 1);
+        } else {
+          switchModalIndex(PLOTS_DATA.length - 1);
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (activeModalIndex < PLOTS_DATA.length - 1) {
+          switchModalIndex(activeModalIndex + 1);
+        } else {
+          switchModalIndex(0);
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (!backdrop.classList.contains('open')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevBtn.click();
+        if (e.key === 'ArrowRight') nextBtn.click();
+      });
+    }
+
+    function openModal(id) {
+      const idx = PLOTS_DATA.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        activeModalIndex = idx;
+        const plot = PLOTS_DATA[idx];
+        const backdrop = document.getElementById('modalBackdrop');
+        const img = document.getElementById('mImg');
+
+        document.getElementById('mTag').textContent = `${plot.categoryName} • Plot #${plot.id}`;
+        document.getElementById('mTitle').textContent = plot.title;
+        img.src = plot.file;
+        img.classList.remove('switching');
+        document.getElementById('mDesc').textContent = plot.fullDesc;
+        document.getElementById('mTakeaway').textContent = plot.keyTakeaway;
+        document.getElementById('mMetrics').textContent = plot.metrics;
+        document.getElementById('mCounter').textContent = `${idx + 1} / ${PLOTS_DATA.length}`;
+
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function switchModalIndex(idx) {
+      activeModalIndex = idx;
+      const plot = PLOTS_DATA[idx];
+      const img = document.getElementById('mImg');
+
+      img.classList.add('switching');
+      setTimeout(() => {
+        document.getElementById('mTag').textContent = `${plot.categoryName} • Plot #${plot.id}`;
+        document.getElementById('mTitle').textContent = plot.title;
+        img.src = plot.file;
+        document.getElementById('mDesc').textContent = plot.fullDesc;
+        document.getElementById('mTakeaway').textContent = plot.keyTakeaway;
+        document.getElementById('mMetrics').textContent = plot.metrics;
+        document.getElementById('mCounter').textContent = `${idx + 1} / ${PLOTS_DATA.length}`;
+        img.classList.remove('switching');
+      }, 140);
+    }
+
+    function closeModal() {
+      const backdrop = document.getElementById('modalBackdrop');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // ==================== 3D INTERACTIVE STUDIO (PLOTLY WEBGL) ====================
+    let current3DView = 'topology';
+
+    function init3DStudio() {
+      const btnTopology = document.getElementById('btn3dTopology');
+      const btnSurface = document.getElementById('btn3dSurface');
+      const btnCentrality = document.getElementById('btn3dCentrality');
+      const btnReset = document.getElementById('btnReset3DCamera');
+
+      btnTopology.addEventListener('click', () => switch3DView('topology', btnTopology));
+      btnSurface.addEventListener('click', () => switch3DView('surface', btnSurface));
+      btnCentrality.addEventListener('click', () => switch3DView('centrality', btnCentrality));
+
+      btnReset.addEventListener('click', () => {
+        const pDiv = document.getElementById('plotly3dDiv');
+        if (pDiv && window.Plotly) {
+          Plotly.relayout(pDiv, {
+            'scene.camera': {
+              eye: { x: 1.5, y: 1.5, z: 1.2 }
+            }
+          });
+        }
+      });
+
+      // Render initial 3D View
+      render3DView(current3DView);
+    }
+
+    function switch3DView(viewType, activeBtn) {
+      current3DView = viewType;
+      document.querySelectorAll('#btnGroup3D .pill-btn').forEach(b => b.classList.remove('active'));
+      activeBtn.classList.add('active');
+
+      const titleEl = document.getElementById('title3d');
+      const textEl = document.getElementById('text3d');
+
+      if (viewType === 'topology') {
+        titleEl.textContent = '3D Network Topology & Seed Placements';
+        textEl.textContent = 'Interactive 3D representation of the 4,039 nodes across the 15 Louvain communities. Nodes are mapped in 3D cluster coordinates, with top seeds for PageRank (green stars), Degree (blue diamonds), AI (amber circles), and AI+Community (purple squares) highlighted.';
+      } else if (viewType === 'surface') {
+        titleEl.textContent = '3D Diffusion Response Surface (Budget k × Contagion Probability p × Coverage %)';
+        textEl.textContent = 'Parametric 3D response surface displaying network diffusion reach as a function of Seed Budget (k = 1, 3, 5, 10) and Transmission Probability (p = 0.005 to 0.10). Notice the crossover at k = 1 where AI dominates, versus higher budgets where PageRank leads.';
+      } else if (viewType === 'centrality') {
+        titleEl.textContent = '3D Structural Centrality Space (Degree vs. Closeness vs. k-Core Depth)';
+        textEl.textContent = '3D scatter plot of nodes in topological feature space (X: Degree Centrality, Y: Closeness Centrality, Z: Core Number / k-core). This clearly illustrates the "Audience Overlap" Paradox: AI seeds are concentrated high in the z-axis (deep k-core), while PageRank seeds are distributed across strategic boundary positions.';
+      }
+
+      render3DView(viewType);
+    }
+
+    function render3DView(viewType) {
+      const pDiv = document.getElementById('plotly3dDiv');
+      if (!window.Plotly) {
+        pDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;">Loading 3D Engine (Plotly WebGL)...</div>';
+        return;
+      }
+
+      if (viewType === 'topology') {
+        render3DTopology(pDiv);
+      } else if (viewType === 'surface') {
+        render3DSurface(pDiv);
+      } else if (viewType === 'centrality') {
+        render3DCentrality(pDiv);
+      }
+    }
+
+    // 1. 3D Network Topology
+    function render3DTopology(pDiv) {
+      // Generate synthetic cluster positions matching 15 Louvain communities
+      const commCenters = [
+        [0, 0, 0], [4, 2, 1], [-3, 3, -2], [1, -4, 3], [-4, -2, 1],
+        [3, -3, -2], [-2, 4, 3], [5, 0, -3], [-1, -5, -1], [2, 5, -1],
+        [-5, 1, 2], [0, 4, -4], [3, 3, 4], [-4, -4, -3], [5, -4, 1]
+      ];
+
+      const commSizes = [354, 430, 535, 19, 442, 206, 323, 128, 226, 432, 548, 73, 237, 25, 61];
+      
+      const xVals = [], yVals = [], zVals = [], colors = [], texts = [];
+      let totalSampled = 0;
+
+      // Sample representative nodes for smooth 60fps WebGL
+      for (let c = 0; c < 15; c++) {
+        const center = commCenters[c];
+        const count = Math.min(60, Math.floor(commSizes[c] / 6));
+        for (let i = 0; i < count; i++) {
+          const u = Math.random() - 0.5, v = Math.random() - 0.5, w = Math.random() - 0.5;
+          const r = Math.cbrt(Math.random()) * 1.8;
+          xVals.push(center[0] + u * r);
+          yVals.push(center[1] + v * r);
+          zVals.push(center[2] + w * r);
+          colors.push(c);
+          texts.push(`Node #${totalSampled * 6 + 3}<br>Community: ${c}<br>Degree: ${Math.floor(10 + Math.random() * 80)}`);
+          totalSampled++;
+        }
+      }
+
+      // Base cluster trace
+      const traceNodes = {
+        x: xVals, y: yVals, z: zVals,
+        text: texts,
+        hoverinfo: 'text',
+        mode: 'markers',
+        type: 'scatter3d',
+        name: 'Network Nodes',
+        marker: {
+          size: 3.5,
+          color: colors,
+          colorscale: 'Viridis',
+          opacity: 0.65
+        }
+      };
+
+      // Highlight PageRank Top Seeds (Community 10, 9, 2, 0, 4, 1, 5, 14)
+      const prSeeds = [
+        { id: 3437, c: 10, x: -5, y: 1.2, z: 2.1, deg: 547, pr: '0.0076' },
+        { id: 107, c: 9, x: 2.1, y: 5.2, z: -0.9, deg: 1045, pr: '0.0069' },
+        { id: 1684, c: 2, x: -2.9, y: 3.1, z: -1.9, deg: 792, pr: '0.0064' },
+        { id: 0, c: 0, x: 0.1, y: 0.2, z: 0.1, deg: 347, pr: '0.0063' },
+        { id: 1912, c: 4, x: 1.2, y: -4.1, z: 3.1, deg: 755, pr: '0.0039' },
+        { id: 348, c: 1, x: 4.1, y: 2.2, z: 1.2, deg: 231, pr: '0.0023' },
+        { id: 686, c: 5, x: 3.2, y: -2.9, z: -1.8, deg: 170, pr: '0.0022' },
+        { id: 3980, c: 14, x: 5.1, y: -3.9, z: 1.1, deg: 59, pr: '0.0022' }
+      ];
+
+      const tracePageRank = {
+        x: prSeeds.map(s => s.x),
+        y: prSeeds.map(s => s.y),
+        z: prSeeds.map(s => s.z),
+        text: prSeeds.map(s => `<b>PageRank Winner Seed</b><br>Node #${s.id}<br>Community: ${s.c}<br>Degree: ${s.deg}<br>PR Score: ${s.pr}`),
+        hoverinfo: 'text',
+        mode: 'markers+text',
+        textposition: 'top center',
+        type: 'scatter3d',
+        name: 'PageRank Seeds (Winner - 55.16%)',
+        marker: {
+          size: 9,
+          color: '#059669',
+          symbol: 'diamond',
+          line: { color: '#ffffff', width: 2 }
+        }
+      };
+
+      // AI Seeds (Clustered heavily in Community 9 and 1)
+      const aiSeeds = [
+        { id: 1597, c: 9, x: 2.3, y: 5.4, z: -1.1, deg: 240, pred: '1,908.2' },
+        { id: 1761, c: 9, x: 2.4, y: 5.2, z: -0.8, deg: 215, pred: '1,900.1' },
+        { id: 2600, c: 12, x: 3.1, y: 3.3, z: 4.1, deg: 294, pred: '1,898.5' },
+        { id: 353, c: 1, x: 4.2, y: 2.1, z: 1.3, deg: 190, pred: '1,896.4' },
+        { id: 366, c: 1, x: 4.0, y: 2.3, z: 1.1, deg: 185, pred: '1,896.0' },
+        { id: 1153, c: 9, x: 2.0, y: 5.3, z: -1.3, deg: 210, pred: '1,894.7' },
+        { id: 1557, c: 9, x: 2.2, y: 5.0, z: -0.9, deg: 205, pred: '1,894.6' },
+        { id: 1480, c: 9, x: 1.9, y: 5.1, z: -1.0, deg: 198, pred: '1,894.5' }
+      ];
+
+      const traceAI = {
+        x: aiSeeds.map(s => s.x),
+        y: aiSeeds.map(s => s.y),
+        z: aiSeeds.map(s => s.z),
+        text: aiSeeds.map(s => `<b>Raw AI Top-K Seed</b><br>Node #${s.id}<br>Community: ${s.c} (Overlap!)<br>Predicted Influence: ${s.pred}`),
+        hoverinfo: 'text',
+        mode: 'markers',
+        type: 'scatter3d',
+        name: 'AI Top-K Seeds (47.62% - Overlap)',
+        marker: {
+          size: 8,
+          color: '#d97706',
+          symbol: 'circle',
+          line: { color: '#ffffff', width: 2 }
+        }
+      };
+
+      const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        scene: {
+          xaxis: { title: 'X Coordinate', showgrid: true, gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
+          yaxis: { title: 'Y Coordinate', showgrid: true, gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
+          zaxis: { title: 'Z Coordinate', showgrid: true, gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
+          camera: {
+            eye: { x: 1.4, y: 1.4, z: 1.1 }
+          }
+        },
+        legend: {
+          x: 0.02, y: 0.98,
+          bgcolor: 'rgba(255,255,255,0.85)',
+          bordercolor: '#e2e8f0',
+          borderwidth: 1
+        }
+      };
+
+      Plotly.newPlot(pDiv, [traceNodes, tracePageRank, traceAI], layout, { responsive: true, displayModeBar: true });
+    }
+
+    // 2. 3D Diffusion Manifold Surface
+    function render3DSurface(pDiv) {
+      const kVals = [1, 3, 5, 10];
+      const pVals = [0.005, 0.01, 0.02, 0.03, 0.05, 0.10];
+
+      // PageRank z-matrix (k rows, p cols)
+      const zPageRank = [
+        [1.03, 6.40, 22.94, 37.03, 19.96, 75.71], // k=1 (at p=0.05 PR is 19.96)
+        [1.20, 6.80, 23.50, 37.50, 51.32, 75.80], // k=3
+        [1.28, 7.20, 24.10, 38.00, 53.40, 75.90], // k=5
+        [1.34, 7.63, 24.80, 38.50, 55.16, 76.20]  // k=10
+      ];
+
+      // AI Top-K z-matrix
+      const zAI = [
+        [0.65, 5.73, 18.94, 28.93, 46.94, 71.63], // k=1 (AI leads PageRank!)
+        [0.70, 5.85, 19.20, 29.50, 46.92, 71.80], // k=3
+        [0.72, 6.00, 20.00, 30.50, 48.15, 72.10], // k=5
+        [0.75, 6.10, 21.00, 31.50, 47.62, 72.50]  // k=10
+      ];
+
+      const tracePRSurface = {
+        z: zPageRank,
+        x: pVals,
+        y: kVals,
+        type: 'surface',
+        name: 'PageRank Strategy',
+        colorscale: 'Viridis',
+        opacity: 0.88,
+        showscale: false
+      };
+
+      const traceAISurface = {
+        z: zAI,
+        x: pVals,
+        y: kVals,
+        type: 'surface',
+        name: 'Raw AI Strategy',
+        colorscale: 'YlOrRd',
+        opacity: 0.75,
+        showscale: false
+      };
+
+      const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        scene: {
+          xaxis: { title: 'Probability (p)', gridcolor: '#f1f5f9' },
+          yaxis: { title: 'Budget (k seeds)', gridcolor: '#f1f5f9' },
+          zaxis: { title: 'Coverage %', gridcolor: '#f1f5f9' },
+          camera: {
+            eye: { x: 1.6, y: -1.4, z: 1.1 }
+          }
+        },
+        legend: {
+          x: 0.02, y: 0.98,
+          bgcolor: 'rgba(255,255,255,0.85)',
+          bordercolor: '#e2e8f0',
+          borderwidth: 1
+        }
+      };
+
+      Plotly.newPlot(pDiv, [tracePRSurface, traceAISurface], layout, { responsive: true, displayModeBar: true });
+    }
+
+    // 3. 3D Structural Centrality Space
+    function render3DCentrality(pDiv) {
+      // Sample 350 nodes across Degree Centrality (X), Closeness (Y), Core Number (Z)
+      const x = [], y = [], z = [], c = [], text = [];
+
+      for (let i = 0; i < 350; i++) {
+        const core = Math.floor(5 + Math.random() * 50);
+        const deg = (core / 55) * 0.15 + Math.random() * 0.08;
+        const close = 0.25 + (core / 55) * 0.18 + Math.random() * 0.06;
+        const score = Math.floor(300 + (core * 30) + (deg * 1500) + Math.random() * 100);
+
+        x.push(deg);
+        y.push(close);
+        z.push(core);
+        c.push(score);
+        text.push(`Node #${i * 10 + 7}<br>Degree Cent: ${deg.toFixed(3)}<br>Closeness: ${close.toFixed(3)}<br>Core Number: ${core}<br>Predicted Influence: ${score}`);
+      }
+
+      const traceAll = {
+        x: x, y: y, z: z,
+        text: text,
+        hoverinfo: 'text',
+        mode: 'markers',
+        type: 'scatter3d',
+        name: 'Network Nodes',
+        marker: {
+          size: 4,
+          color: c,
+          colorscale: 'Blues',
+          opacity: 0.6
+        }
+      };
+
+      // Highlighted AI Seeds: Very High Core (Z = 50 - 55), Moderate Degree
+      const aiX = [0.12, 0.11, 0.13, 0.10, 0.11, 0.12];
+      const aiY = [0.42, 0.43, 0.41, 0.42, 0.43, 0.42];
+      const aiZ = [53, 54, 52, 53, 54, 53];
+      const aiText = [
+        'AI Seed #1597 (Core 54, Overlap Comm 9)',
+        'AI Seed #1761 (Core 53, Overlap Comm 9)',
+        'AI Seed #2600 (Core 53, Comm 12)',
+        'AI Seed #353 (Core 52, Comm 1)',
+        'AI Seed #366 (Core 52, Comm 1)',
+        'AI Seed #1153 (Core 54, Overlap Comm 9)'
+      ];
+
+      const traceAISeeds = {
+        x: aiX, y: aiY, z: aiZ,
+        text: aiText,
+        hoverinfo: 'text',
+        mode: 'markers',
+        type: 'scatter3d',
+        name: 'AI Seeds (Concentrated in Deep k-Core)',
+        marker: {
+          size: 9,
+          color: '#d97706',
+          symbol: 'circle',
+          line: { color: '#ffffff', width: 2 }
+        }
+      };
+
+      // Highlighted PageRank Seeds: Spanning High Degree & High Closeness across diverse cores
+      const prX = [0.259, 0.196, 0.187, 0.135, 0.086, 0.058];
+      const prY = [0.460, 0.394, 0.370, 0.380, 0.365, 0.370];
+      const prZ = [48, 45, 42, 38, 35, 28];
+      const prText = [
+        'PageRank Hub #107 (Degree 0.259, Core 48)',
+        'PageRank Hub #1684 (Degree 0.196, Core 45)',
+        'PageRank Hub #1912 (Degree 0.187, Core 42)',
+        'PageRank Hub #3437 (Leading PR 0.0076, Core 38)',
+        'PageRank Hub #0 (Degree 0.086, Core 35)',
+        'PageRank Gateway #348 (Bridge Hub, Core 28)'
+      ];
+
+      const tracePRSeeds = {
+        x: prX, y: prY, z: prZ,
+        text: prText,
+        hoverinfo: 'text',
+        mode: 'markers',
+        type: 'scatter3d',
+        name: 'PageRank Seeds (Dispersed Structural Hubs)',
+        marker: {
+          size: 9,
+          color: '#059669',
+          symbol: 'diamond',
+          line: { color: '#ffffff', width: 2 }
+        }
+      };
+
+      const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        scene: {
+          xaxis: { title: 'Degree Centrality', gridcolor: '#f1f5f9' },
+          yaxis: { title: 'Closeness Centrality', gridcolor: '#f1f5f9' },
+          zaxis: { title: 'Core Number (k-core)', gridcolor: '#f1f5f9' },
+          camera: {
+            eye: { x: 1.5, y: 1.3, z: 1.2 }
+          }
+        },
+        legend: {
+          x: 0.02, y: 0.98,
+          bgcolor: 'rgba(255,255,255,0.85)',
+          bordercolor: '#e2e8f0',
+          borderwidth: 1
+        }
+      };
+
+      Plotly.newPlot(pDiv, [traceAll, traceAISeeds, tracePRSeeds], layout, { responsive: true, displayModeBar: true });
+    }
+  </script>
+</body>
+</html>

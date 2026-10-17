@@ -1,0 +1,15 @@
+Metric,Value
+Nodes,4039.0
+Edges,88234.0
+Network density,0.01082
+Average degree,43.691
+Minimum degree,1.0
+Maximum degree,1045.0
+Median degree,25.0
+Average clustering coefficient,0.6055
+Global transitivity,0.5192
+Degree assortativity,0.0636
+Connected components,1.0
+Largest component size,4039.0
+Average shortest path (largest component),3.693
+Diameter (largest component),8.0

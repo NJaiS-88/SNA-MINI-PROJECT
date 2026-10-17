@@ -1,0 +1,3 @@
+Strategy,mean_coverage,std_coverage,mean_spread,mean_duration,communities_represented,Improvement_over_PageRank_pct
+AI,47.624783362218366,5.270565416232557,1923.565,17.17,3.0,-13.658041739887665
+AI + Community,49.512007922753156,2.4432120639965884,1999.79,15.45,6.0,-10.236573908867099

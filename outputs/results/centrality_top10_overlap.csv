@@ -1,0 +1,6 @@
+,degree_centrality,betweenness,closeness,pagerank,eigenvector
+degree_centrality,1.0,0.5,0.2,0.5,0.1
+betweenness,0.5,1.0,0.4,0.6,0.1
+closeness,0.2,0.4,1.0,0.4,0.0
+pagerank,0.5,0.6,0.4,1.0,0.1
+eigenvector,0.1,0.1,0.0,0.1,1.0

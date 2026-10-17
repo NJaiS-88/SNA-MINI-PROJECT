@@ -1,0 +1,19 @@
+Method,K,TopK_overlap
+Linear Regression,5,0.0
+Linear Regression,10,0.2
+Linear Regression,20,0.45
+Random Forest,5,0.0
+Random Forest,10,0.1
+Random Forest,20,0.45
+Gradient Boosting,5,0.2
+Gradient Boosting,10,0.1
+Gradient Boosting,20,0.5
+[baseline] degree,5,0.2
+[baseline] degree,10,0.4
+[baseline] degree,20,0.35
+[baseline] pagerank,5,0.2
+[baseline] pagerank,10,0.2
+[baseline] pagerank,20,0.35
+[baseline] betweenness,5,0.2
+[baseline] betweenness,10,0.2
+[baseline] betweenness,20,0.25
