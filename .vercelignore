@@ -1,0 +1,11 @@
+# Ignore Python files and datasets so Vercel treats this as a 100% static site
+*.py
+requirements.txt
+data/
+src/
+ai_influencer_campaign/
+{data,src,outputs/
+outputs/models/
+outputs/results/
+__pycache__/
+*.pyc
