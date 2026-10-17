@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: ai-influencer-campaign-dashboard
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
